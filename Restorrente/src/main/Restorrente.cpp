@@ -9,6 +9,7 @@
 #include "../model/Pedido.h"
 #include "../model/Plato.h"
 #include "../utils/serializer/LlamadoAMozoSerializer.h"
+#include "../utils/Parser.h"
 #include "MainProcess.h"
 
 
@@ -52,17 +53,31 @@ int main() {
 	//TODO Reemplazar todos los cout por el log.
 
 
-/*
-	// TODO Leer de archivo de config.
-	Parser p ;
-	p.parse("src/utils/SetUp.txt");
-	int cantMozos = p.getCantMozos();
+
+	Parser p = Parser();
+	//Direccion para usar en eclipse
+	//p.parsearDocumento("SetUp.xml");
+	p.parsearDocumento("../SetUp.xml");
+
+
+	int nivelDeLog = p.getNivelDeLog();
+	int cantMozos = p.gentCantMozos();
 	int cantRecepcionistas = p.getCantRecepcionistas();
 	int cantMesas = p.getCantMesas();
 	int cantComensales = p.getCantComensales();
+
+	cout << "Cantidad de Mozos: " << cantMozos << endl;
+	cout << "Cantidad de Recepcionistas: " << cantRecepcionistas << endl;
+	cout << "Cantidad de Mesas: " << cantMesas << endl;
+	cout << "Cantidad de Comensales: " << cantComensales << endl;
+	cout << "nivelDeLog: " << nivelDeLog << endl;
+	Menu* menu = p.getMenu();
+/*
+	cout << menu->getPlatoRandom().getNombre() <<endl;
+	cout << menu->getPlatoRandom().getNombre() <<endl;
+	cout << menu->getPlatoRandom().getNombre() <<endl;
 */
-
-
+/*
 	int cantMozos = 2;
 	int cantRecepcionistas = 2;
 	int cantMesas = 2;
@@ -78,7 +93,7 @@ int main() {
 	Plato plato3("Ensalada mixta", 45.50);
 	menu->agregarPlato(plato3);
 
-
+*/
 	MainProcess mainProcess(cantRecepcionistas, cantMozos, cantMesas, cantComensales, menu);
 	mainProcess.run();
 

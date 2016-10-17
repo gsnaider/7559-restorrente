@@ -1,36 +1,50 @@
 /*
  * Parser.h
  *
- *  Created on: Oct 16, 2016
- *      Author: juampa_94
+ *  Created on: Mar 23, 2016
+ *      Author: gonzalo
  */
 
-#ifndef PARSER_H_
-#define PARSER_H_
+#ifndef UTILS_PARSER_PARSER_H_
+#define UTILS_PARSER_PARSER_H_
 
-
-
-#include <iostream>
-#include <sstream>
-#include <fstream>
 #include <string>
+#include <algorithm>
+#include "pugixml/pugixml.hpp"
+#include "../model/Menu.h"
+#include <sstream>
+#include <iostream>
 
-class Parser {
 
+class Parser
+{
 private:
-	int cantMozos;
 	int cantRecepcionistas;
-	int cantMesas;
 	int cantComensales;
+	int cantMesas;
+	int cantMozos;
+	int nivelDeLog;
+	Menu* menu;
+
+	void extraerCantComensales(const pugi::xml_document* doc);
+	void extraerCantRecepcionistas(const pugi::xml_document* doc);
+	void extraerCantMesas(const pugi::xml_document* doc);
+	void extraerCantMozos(const pugi::xml_document* doc);
+	void extraerNivelDeLog(const pugi::xml_document* doc);
+	void extraerMenu(const pugi::xml_document* doc);
 
 public:
 	Parser();
-	virtual ~Parser();
-	bool parse(std::string Pathfile);
-	int getCantMozos();
+	~Parser();
+	void parsearDocumento(const std::string& nombreArchivoXML);
+	int getCantComensales();
 	int getCantRecepcionistas();
 	int getCantMesas();
-	int getCantComensales();
+	int gentCantMozos();
+	int getNivelDeLog();
+	Menu* getMenu();
+
 };
 
-#endif /* PARSER_H_ */
+
+#endif /* UTILS_PARSER_PARSER_H_ */

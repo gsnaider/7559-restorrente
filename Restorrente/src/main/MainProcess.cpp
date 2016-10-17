@@ -45,7 +45,6 @@ MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, i
 void MainProcess::iniciarProcesoCocinero(){
 	cout << "DEBUG: Iniciando cocinero"<< endl;
 	pid_t idCocinero = fork();
-
 	if (idCocinero == 0){
 		CocineroProcess cocinero;
 		cocinero.run();
