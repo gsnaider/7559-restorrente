@@ -29,7 +29,7 @@ std::string Logger::integerToString ( int number )
 
 Logger::Logger()
 {
-    log_path = "../log.txt";
+    log_path = "../restorrente.log";
     mode = INFO; //Por default se esta creando en INFO
     mode_symbols[0] = "D.\t";
     mode_symbols[1] = "E.\t";
@@ -59,7 +59,7 @@ void Logger::log_timestamp(){
     std::string out_final = "/---------------------- " + timestamp + " ----------------------/" + "\n";
 
     //Definido con ../ para salir de la carpeta Debug
-    LockFile log("../log.txt");
+    LockFile log("../restorrente.log");
     log.tomarLock();
     log.escribir(static_cast<const void*>(out_final.c_str()),out_final.length());
     log.liberarLock();
@@ -91,7 +91,7 @@ void Logger::_log(std::string name, std::string comment, LOG_MODE comment_mode){
                                 integerToString(getpid()) + "\t" +
                                 mode_symbols[comment_mode] + comment + "\n";
 
-        LockFile log("../log.txt");
+        LockFile log("../restorrente.log");
         log.tomarLock();
         log.escribir(static_cast<const void*>(out_final.c_str()),out_final.length());
         log.liberarLock();
