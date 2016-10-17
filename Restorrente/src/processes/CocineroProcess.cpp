@@ -66,8 +66,8 @@ int CocineroProcess::leerTamanioPedido(){
 
 string CocineroProcess::leerPedido(int tamanioPedido) {
 
-	 char * buffer = new char [tamanioPedido];
-	 string pedido;
+	char buffer[tamanioPedido];
+	string pedido;
 
 	cout << getpid() << " " << "DEBUG: Cocinero esperando para leer pipePedidosACocinar"<< endl;
 

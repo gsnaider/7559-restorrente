@@ -63,7 +63,7 @@ int MozoProcess::leerTamanioLlamado(){
 }
 
 string MozoProcess::leerLlamado(int tamanioLlamado){
-	 char * buffer = new char [tamanioLlamado];
+	 char buffer[tamanioLlamado];
 	 string llamado;
 
 	cout << getpid() << " " << "DEBUG: Mozo esperando para leer pipeLlamadosAMozos"<< endl;
