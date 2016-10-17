@@ -146,11 +146,9 @@ PedidoCuenta LlamadoAMozoSerializer::deserializarPedidoCuenta(
 
 int LlamadoAMozoSerializer::getTipoLlamado(string data) {
 
-	string aux;
 	string tipoDatoStr;
 	istringstream ss(data);
 
-	getline(ss, aux, SEPARADOR);
 	getline(ss, tipoDatoStr, SEPARADOR);
 
 	return stoi(tipoDatoStr);

@@ -89,14 +89,14 @@ private:
 	vector<Semaforo*>* semsMesaPago;
 	vector<Semaforo*>* semsFacturas;
 	vector<Semaforo*>* semsMesasLibres;
-	vector<Semaforo*>* semsComidaEnMesas;
+//	vector<Semaforo*>* semsComidaEnMesas;
 
 
 	MemoriaCompartida<int>* shmPersonasLiving;
 	MemoriaCompartida<double>* shmCaja;
 
 	vector<MemoriaCompartida<bool>*>* shmMesasLibres;
-	vector<MemoriaCompartida<Comida>*>* shmComidaEnMesas;
+//	vector<MemoriaCompartida<Comida>*>* shmComidaEnMesas;
 	vector<MemoriaCompartida<double>*>* shmFacturas;
 
 	Pipe* pipeLlamadosAMozos;

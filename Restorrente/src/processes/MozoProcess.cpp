@@ -15,16 +15,15 @@
 
 namespace std {
 
-MozoProcess::MozoProcess(Pipe* pipeLlamadosAMozos, Pipe* pipePedidosACocinar, Semaforo* semLlamadosAMozos, vector<Semaforo*>* semsComidaEnMesas,
-		vector<MemoriaCompartida<Comida>*>* shmComidaEnMesas, vector<Semaforo*>* semsLlegoComida,
+MozoProcess::MozoProcess(Pipe* pipeLlamadosAMozos, Pipe* pipePedidosACocinar, Semaforo* semLlamadosAMozos, vector<Semaforo*>* semsLlegoComida,
 		vector<Semaforo*>* semsFacturas, vector<MemoriaCompartida<double>*>* shmFacturas,
 		Semaforo* semCajaB, MemoriaCompartida<double>* shmCaja, vector<Semaforo*>* semsMesaPago) {
 
 	this->pipeLlamadosAMozos = pipeLlamadosAMozos;
 	this->pipePedidosACocinar = pipePedidosACocinar;
 	this->semLlamadosAMozos = semLlamadosAMozos;
-	this->semsComidaEnMesas = semsComidaEnMesas;
-	this->shmComidaEnMesas = shmComidaEnMesas;
+//	this->semsComidaEnMesas = semsComidaEnMesas;
+//	this->shmComidaEnMesas = shmComidaEnMesas;
 	this->semsLlegoComida = semsLlegoComida;
 	this->semsFacturas = semsFacturas;
 	this->shmFacturas = shmFacturas;
@@ -32,14 +31,16 @@ MozoProcess::MozoProcess(Pipe* pipeLlamadosAMozos, Pipe* pipePedidosACocinar, Se
 	this->shmCaja = shmCaja;
 	this->semsMesaPago = semsMesaPago;
 
+	inicializarMemoriasCompartidas();
+
 }
 
 void MozoProcess::inicializarMemoriasCompartidas(){
 	this->shmCaja->crear(SHM_CAJA, 0);
 
-	for (unsigned int i = 0; i < shmComidaEnMesas->size(); i++){
-		shmComidaEnMesas->at(i)->crear(SHM_COMIDA_MESAS, i);
-	}
+//	for (unsigned int i = 0; i < shmComidaEnMesas->size(); i++){
+//		shmComidaEnMesas->at(i)->crear(SHM_COMIDA_MESAS, i);
+//	}
 
 	for (unsigned int i = 0; i < shmFacturas->size(); i++){
 		shmFacturas->at(i)->crear(SHM_FACTURAS, i);
@@ -85,13 +86,39 @@ string MozoProcess::leerLlamado(int tamanioLlamado){
 
 void MozoProcess::procesarPedido(Pedido pedido) {
 	cout << getpid() << " " << "INFO: Mozo tomando pedido de mesa " << pedido.getMesa() << endl;
-	sleep(5);
+
+	for (unsigned int i = 0; i < pedido.getPlatos().size(); i++){
+		cout << getpid() << " " << "INFO: Mozo tomando pedido de " << pedido.getPlatos().at(i).getNombre() << endl;
+	}
+
+	string pedidoStr = LlamadoAMozoSerializer::serializar(pedido);
+
+	cout << getpid() << " " << "DEBUG: Mozo escribiendo en pipePedidosACocinar: " << pedidoStr << endl;
+	pipePedidosACocinar->escribir(static_cast<const void*>(pedidoStr.c_str()), pedidoStr.size());
+
+	cout << getpid() << " " << "INFO: Mozo mando el pedido de la mesa " << pedido.getMesa() << " a la cocina." << endl;
 
 }
 
 void MozoProcess::procesarComida(Comida comida) {
 	cout << getpid() << " " << "INFO: Mozo recibiendo comida para mesa " << comida.getMesa() << endl;
-	sleep(5);
+
+//	cout << getpid() << " " << "DEBUG: Mozo esperando semsComidaEnMesas[" << comida.getMesa() << "]" << endl;
+//
+//	semsComidaEnMesas->at(comida.getMesa())->p();
+//
+//	cout << getpid() << " " << "DEBUG: Mozo escribiendo en shmComidaEnMesas[" << comida.getMesa() << "]" << endl;
+
+	cout << getpid() << " " << "INFO: Mozo llevando comida a mesa " << comida.getMesa() << endl;
+
+//	shmComidaEnMesas->at(comida.getMesa())->escribir(comida);
+//
+//	cout << getpid() << " " << "DEBUG: Mozo termino de escribir en shmComidaEnMesas[" << comida.getMesa() << "]" << endl;
+//
+//	semsComidaEnMesas->at(comida.getMesa())->v();
+
+	cout << getpid() << " " << "INFO: Mozo dejando comida en mesa " << comida.getMesa() << endl;
+	semsLlegoComida->at(comida.getMesa())->v();
 
 }
 
@@ -165,9 +192,9 @@ void MozoProcess::run(){
 void MozoProcess::liberarMemoriasCompartidas(){
 	this->shmCaja->liberar();
 
-	for (unsigned int i = 0; i < shmComidaEnMesas->size(); i++){
-		shmComidaEnMesas->at(i)->liberar();
-	}
+//	for (unsigned int i = 0; i < shmComidaEnMesas->size(); i++){
+//		shmComidaEnMesas->at(i)->liberar();
+//	}
 
 	for (unsigned int i = 0; i < shmFacturas->size(); i++){
 		shmFacturas->at(i)->liberar();

@@ -43,8 +43,8 @@ private:
 	vector<Semaforo*>* semsMesasLibres;
 	vector<MemoriaCompartida<bool>*>* shmMesasLibres;
 
-	vector<Semaforo*>* semsComidaEnMesas;
-	vector<MemoriaCompartida<Comida>*>* shmComidaEnMesas;
+//	vector<Semaforo*>* semsComidaEnMesas;
+//	vector<MemoriaCompartida<Comida>*>* shmComidaEnMesas;
 
 
 
@@ -67,8 +67,7 @@ public:
 	GrupoComensalesProcess(int cantPersonas, Semaforo* semRecepcionistasLibres, Semaforo* semComensalesEnPuerta,
 			Semaforo* semPersonasLivingB, MemoriaCompartida<int>* shmPersonasLiving, Semaforo* semMesasLibres,
 			vector<Semaforo*>* semsMesasLibres, vector<MemoriaCompartida<bool>*>* shmMesasLibres,
-			Pipe* pipeLlamadosAMozos, vector<Semaforo*>* semsLlegoComida, vector<Semaforo*>* semsComidaEnMesas,
-			vector<MemoriaCompartida<Comida>*>* shmComidaEnMesas, vector<Semaforo*>* semsMesaPago, Menu* menu);
+			Pipe* pipeLlamadosAMozos, vector<Semaforo*>* semsLlegoComida, vector<Semaforo*>* semsMesaPago, Menu* menu);
 
 	void run();
 	virtual ~GrupoComensalesProcess();

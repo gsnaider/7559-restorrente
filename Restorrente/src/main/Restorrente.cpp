@@ -38,7 +38,7 @@ int testSerializador(){
 
 	cout << comidaDes.getMesa() << endl;
 
-	for (int i = 0; i < comidaDes.getPlatos().size(); i++){
+	for (unsigned int i = 0; i < comidaDes.getPlatos().size(); i++){
 		cout << comidaDes.getPlatos().at(i).getNombre() << endl;
 		cout << comidaDes.getPlatos().at(i).getPrecio() << endl;
 	}
@@ -63,10 +63,10 @@ int main() {
 */
 
 
-	int cantMozos = 2;
-	int cantRecepcionistas = 2;
-	int cantMesas = 2;
-	int cantComensales = 5;
+	int cantMozos = 1;
+	int cantRecepcionistas = 1;
+	int cantMesas = 1;
+	int cantComensales = 2;
 	Menu* menu = new Menu();
 
 	Plato plato1("Fideos con tuco", 50);

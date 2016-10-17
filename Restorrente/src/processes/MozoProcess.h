@@ -29,8 +29,9 @@ private:
 	Pipe* pipeLlamadosAMozos;
 	Pipe* pipePedidosACocinar;
 
-	vector<Semaforo*>* semsComidaEnMesas;
-	vector<MemoriaCompartida<Comida>*>* shmComidaEnMesas;
+//	vector<Semaforo*>* semsComidaEnMesas;
+//	vector<MemoriaCompartida<Comida>*>* shmComidaEnMesas;
+
 	vector<Semaforo*>* semsLlegoComida;
 
 	vector<Semaforo*>* semsFacturas;
@@ -54,8 +55,7 @@ private:
 	void liberarMemoriasCompartidas();
 
 public:
-	MozoProcess(Pipe* pipeLlamadosAMozos, Pipe* pipePedidosACocinar, Semaforo* semLlamadosAMozos, vector<Semaforo*>* semsComidaEnMesas,
-	vector<MemoriaCompartida<Comida>*>* shmComidaEnMesas, vector<Semaforo*>* semsLlegoComida,
+	MozoProcess(Pipe* pipeLlamadosAMozos, Pipe* pipePedidosACocinar, Semaforo* semLlamadosAMozos, vector<Semaforo*>* semsLlegoComida,
 	vector<Semaforo*>* semsFacturas, vector<MemoriaCompartida<double>*>* shmFacturas,
 	Semaforo* semCajaB, MemoriaCompartida<double>* shmCaja, vector<Semaforo*>* semsMesaPago);
 	void run();

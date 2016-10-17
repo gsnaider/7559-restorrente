@@ -23,8 +23,7 @@ namespace std {
 GrupoComensalesProcess::GrupoComensalesProcess(int cantPersonas, Semaforo* semRecepcionistasLibres, Semaforo* semComensalesEnPuerta,
 		Semaforo* semPersonasLivingB, MemoriaCompartida<int>* shmPersonasLiving, Semaforo* semMesasLibres,
 		vector<Semaforo*>* semsMesasLibres, vector<MemoriaCompartida<bool>*>* shmMesasLibres,
-		Pipe* pipeLlamadosAMozos, vector<Semaforo*>* semsLlegoComida, vector<Semaforo*>* semsComidaEnMesas,
-		vector<MemoriaCompartida<Comida>*>* shmComidaEnMesas, vector<Semaforo*>* semsMesaPago, Menu* menu) {
+		Pipe* pipeLlamadosAMozos, vector<Semaforo*>* semsLlegoComida, vector<Semaforo*>* semsMesaPago, Menu* menu) {
 
 	this->mesa = -1; //Despues se setea el valor real.
 
@@ -45,8 +44,8 @@ GrupoComensalesProcess::GrupoComensalesProcess(int cantPersonas, Semaforo* semRe
 	this->semsMesasLibres = semsMesasLibres;
 	this->shmMesasLibres = shmMesasLibres;
 
-	this->semsComidaEnMesas = semsComidaEnMesas;
-	this->shmComidaEnMesas = shmComidaEnMesas;
+//	this->semsComidaEnMesas = semsComidaEnMesas;
+//	this->shmComidaEnMesas = shmComidaEnMesas;
 
 	this->menu = menu;
 
@@ -60,9 +59,10 @@ void GrupoComensalesProcess::inicializarMemoriasCompartidas(){
 		shmMesasLibres->at(i)->crear(SHM_MESAS_LIBRES, i);
 	}
 
-	for (unsigned int i = 0; i < shmComidaEnMesas->size(); i++){
-		shmComidaEnMesas->at(i)->crear(SHM_COMIDA_MESAS, i);
-	}
+//	for (unsigned int i = 0; i < shmComidaEnMesas->size(); i++){
+//		shmComidaEnMesas->at(i)->crear(SHM_COMIDA_MESAS, i);
+//	}
+
 }
 
 int GrupoComensalesProcess::obtenerNumeroMesa(){
@@ -154,6 +154,8 @@ void GrupoComensalesProcess::llegar(){
 
 void GrupoComensalesProcess::comer(){
 	bool seguirPidiendo = true;
+	int i = 0;
+
 	while(seguirPidiendo){
 		cout << getpid() << " " << "INFO: Grupo de comensales eligiendo comida" << endl;
 
@@ -167,14 +169,17 @@ void GrupoComensalesProcess::comer(){
 
 		cout << getpid() << " " << "INFO: Grupo de comensales esperando comida." << endl;
 		semsLlegoComida->at(mesa)->p();
-		cout << getpid() << " " << "INFO: Llego comida a mesa nro " << mesa << endl;
+		cout << getpid() << " " << "INFO: Grupo de comensales: Llego comida a mesa nro " << mesa << endl;
 
-		semsComidaEnMesas->at(mesa)->p();
-		Comida comida = shmComidaEnMesas->at(mesa)->leer();
+//		semsComidaEnMesas->at(mesa)->p();
+//
+//		cout << getpid() << " " << "DEBUG: Grupo de comensales leyendo shmComidaEnMesas[" <<<< endl;
+//
+//		Comida comida = shmComidaEnMesas->at(mesa)->leer();
 
 		cout << getpid() << " " << "INFO: Grupo de comensales empezando a comer" << endl;
 
-		vector<Plato> platos = comida.getPlatos();
+		vector<Plato> platos = pedido.getPlatos();
 
 		for (unsigned int i = 0; i < platos.size(); i++){
 			cout << getpid() << " " << "INFO: Comiendo " << platos[i].getNombre() << endl;
@@ -183,7 +188,13 @@ void GrupoComensalesProcess::comer(){
 
 		cout << getpid() << " " << "INFO: Grupo de comensales termino de comer." << endl;
 
-		seguirPidiendo = (RandomUtil::randomCeroUno() < PROBABILIDAD_IRSE);
+		// TODO Arreglar, no esta funcionando el random.
+		//seguirPidiendo = (RandomUtil::randomCeroUno() < PROBABILIDAD_IRSE);
+
+		//TODO Solucion temporal (borrar).
+		i++;
+		seguirPidiendo = (i < 2);
+
 	}
 }
 
@@ -208,9 +219,9 @@ void GrupoComensalesProcess::run(){
 	cout << "DEBUG: Iniciando grupo de comensales con pid: " << getpid() << endl;
 	llegar();
 
-//	comer();
-	cout << getpid() << " " << "INFO: Grupo de comensales comiendo" << endl;
-	sleep(TIEMPO_COMER);
+	comer();
+//	cout << getpid() << " " << "INFO: Grupo de comensales comiendo" << endl;
+//	sleep(TIEMPO_COMER);
 
 
 	irse();
@@ -223,9 +234,10 @@ void GrupoComensalesProcess::liberarMemoriasCompartidas(){
 		shmMesasLibres->at(i)->liberar();
 	}
 
-	for (unsigned int i = 0; i < shmComidaEnMesas->size(); i++){
-		shmComidaEnMesas->at(i)->liberar();
-	}
+//	for (unsigned int i = 0; i < shmComidaEnMesas->size(); i++){
+//		shmComidaEnMesas->at(i)->liberar();
+//	}
+
 }
 
 GrupoComensalesProcess::~GrupoComensalesProcess() {
