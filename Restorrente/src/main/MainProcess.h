@@ -43,15 +43,10 @@ const string SHM_CAJA = "ipc-init-files/shm_caja.txt";
 const string SHM_FACTURAS = "ipc-init-files/shm_facturas.txt";
 const string SHM_MESAS_LIBRES = "ipc-init-files/shm_mesas_libres.txt";
 const string SHM_COMIDA_MESAS = "ipc-init-files/shm_comida_mesas.txt";
-
 */
 
 
-
-
-
 const string SEM_COMENSALES_EN_PUERTA_INIT_FILE = "../ipc-init-files/sem_comensales_en_puerta.txt";
-const string SEM_COMENSALES_PENDIENTES_INIT_FILE = "../ipc-init-files/sem_comensales_pendientes.txt";
 const string SEM_RECEPCIONISTAS_LIBRES_INIT_FILE = "../ipc-init-files/sem_recepcionistas_libres.txt";
 const string SEM_MESAS_LIBRES_INIT_FILE = "../ipc-init-files/sem_mesas_libres.txt";
 const string SEM_PERSONAS_LIVING_INIT_FILE = "../ipc-init-files/sem_personas_living.txt";
@@ -68,8 +63,6 @@ const string SHM_CAJA = "../ipc-init-files/shm_caja.txt";
 const string SHM_FACTURAS = "../ipc-init-files/shm_facturas.txt";
 const string SHM_MESAS_LIBRES = "../ipc-init-files/shm_mesas_libres.txt";
 const string SHM_COMIDA_MESAS = "../ipc-init-files/shm_comida_mesas.txt";
-
-
 
 class MainProcess {
 

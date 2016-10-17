@@ -208,9 +208,9 @@ void GrupoComensalesProcess::run(){
 	cout << "DEBUG: Iniciando grupo de comensales con pid: " << getpid() << endl;
 	llegar();
 
-	comer();
-//	cout << getpid() << " " << "INFO: Grupo de comensales comiendo" << endl;
-//	sleep(TIEMPO_COMER);
+//	comer();
+	cout << getpid() << " " << "INFO: Grupo de comensales comiendo" << endl;
+	sleep(TIEMPO_COMER);
 
 
 	irse();
