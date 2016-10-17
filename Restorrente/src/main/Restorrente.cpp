@@ -94,7 +94,17 @@ int main() {
 	menu->agregarPlato(plato3);
 
 */
+	LOG_MODE mode;
+	if(nivelDeLog == 0) mode = DEBUG;
+	else if(nivelDeLog == 1) mode = ERROR;
+	else mode = INFO;
+
+	Logger::setMode(mode);
+
+	Logger::log("Restorrente main", "Llamo a mainProcess", DEBUG);
 	MainProcess mainProcess(cantRecepcionistas, cantMozos, cantMesas, cantComensales, menu);
+
+	Logger::log("Restorrente main", "Corro el mainProcess", DEBUG);
 	mainProcess.run();
 
 

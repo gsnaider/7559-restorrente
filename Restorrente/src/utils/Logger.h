@@ -22,6 +22,8 @@ class Logger
         static void log(std::string name, std::string comment, LOG_MODE mode);
         static void logErrno(std::string name);
         static void setMode(LOG_MODE mode);
+        static std::string integerToString ( int number );
+
 
     private:
 
@@ -35,7 +37,6 @@ class Logger
         void log_timestamp();
         std::string timeHMSmu();
 };
-
 
 
 #endif // LOGGER_H
