@@ -19,6 +19,7 @@
 #include "../processes/RecepcionistaProcess.h"
 #include "../utils/random/RandomUtil.h"
 
+
 namespace std {
 
 MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, int cantComensales, Menu* menu) {
@@ -44,8 +45,8 @@ MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, i
 
 void MainProcess::iniciarProcesoCocinero(){
 	cout << "DEBUG: Iniciando cocinero"<< endl;
+	Logger::log(logId, "Iniciando cocinero", DEBUG);
 	pid_t idCocinero = fork();
-
 	if (idCocinero == 0){
 		CocineroProcess cocinero(pipePedidosACocinar, semsFacturas,
 				shmFacturas, pipeLlamadosAMozos);
@@ -59,6 +60,8 @@ void MainProcess::iniciarProcesoCocinero(){
 void MainProcess::iniciarProcesosMozo(){
 	for (int i = 0; i < cantMozos; i++){
 		cout << "DEBUG: Iniciando mozo " << i << endl;
+		Logger::log(logId, "Iniciando mozo "+ Logger::integerToString(i), DEBUG);
+
 
 		pid_t idMozo = fork();
 
@@ -77,6 +80,7 @@ void MainProcess::iniciarProcesosMozo(){
 void MainProcess::iniciarProcesosRecepcionista(){
 	for (int i = 0; i < cantRecepcionistas; i++){
 		cout << "DEBUG: Iniciando recepcionista " << i << endl;
+		Logger::log(logId, "Iniciando recepcionista "+ Logger::integerToString(i), DEBUG);
 		pid_t idRecepcionista = fork();
 
 		if (idRecepcionista == 0){
@@ -192,6 +196,7 @@ void MainProcess::inicializarComensalesComensales(){
 	for (int i = 0; i < cantComensales; i++){
 
 		cout << "DEBUG: Iniciando comensal " << i << endl;
+		Logger::log(logId, "Iniciando comensal "+ Logger::integerToString(i), DEBUG);
 		pid_t idComensal = fork();
 
 		if (idComensal == 0){
@@ -222,6 +227,7 @@ void MainProcess::run(){
 	for (int i = 0; i < cantComensales; i++){
 		pid_t idHijo = wait(NULL);
 		cout << "DEBUG: Termino proceso hijo: " << idHijo << endl;
+		Logger::log(logId, "Termino proceso hijo "+ Logger::integerToString(idHijo), DEBUG);
 	}
 
 	finalizarProcesosRestaurant();

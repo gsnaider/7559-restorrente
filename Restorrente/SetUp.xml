@@ -1,0 +1,29 @@
+<SetUp>
+	<cantComensales>2</cantComensales>
+	<cantMozos>5</cantMozos>
+	<cantRecepcionistas>2</cantRecepcionistas>
+	<cantMesas>2</cantMesas>
+	<nivelDeLog>0</nivelDeLog>
+	<Menu>
+		<Plato>
+			<precio>140.23</precio>
+			<nombre>Mollejas a la provenzal</nombre>
+		</Plato>
+		<Plato>
+			<precio>99</precio>
+			<nombre>Matambre a la pizza</nombre>
+		</Plato>
+		<Plato>
+			<precio>50</precio>
+			<nombre>fideos con tuco</nombre>
+		</Plato>
+		<Plato>
+			<precio>80</precio>
+			<nombre>Milanesa con papas fritas</nombre>
+		</Plato>
+		<Plato>
+			<precio>45.50</precio>
+			<nombre>Ensalada mixta</nombre>
+		</Plato>
+	</Menu>
+</SetUp>
