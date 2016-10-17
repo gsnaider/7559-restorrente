@@ -24,7 +24,7 @@ private:
 	int cantMesas;
 	int cantMozos;
 	int nivelDeLog;
-	Menu* menu;
+	Menu menu;
 
 	void extraerCantComensales(const pugi::xml_document* doc);
 	void extraerCantRecepcionistas(const pugi::xml_document* doc);
@@ -42,7 +42,7 @@ public:
 	int getCantMesas();
 	int gentCantMozos();
 	int getNivelDeLog();
-	Menu* getMenu();
+	Menu getMenu();
 
 };
 

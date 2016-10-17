@@ -22,7 +22,7 @@
 
 namespace std {
 
-MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, int cantComensales, Menu* menu) {
+MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, int cantComensales, Menu menu) {
 	this->cantRecepcionistas = cantRecepcionistas;
 	this->cantMozos = cantMozos;
 	this->cantMesas = cantMesas;
@@ -34,9 +34,7 @@ MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, i
 	semsMesaPago = new vector<Semaforo*>();
 	semsFacturas = new vector<Semaforo*>();
 	semsMesasLibres = new vector<Semaforo*>();
-//	semsComidaEnMesas = new vector<Semaforo*>();
 	shmMesasLibres = new vector<MemoriaCompartida<bool>*>();
-//	shmComidaEnMesas = new vector<MemoriaCompartida<Comida>*>();
 	shmFacturas = new vector<MemoriaCompartida<double>*>();
 
 
@@ -319,8 +317,6 @@ MainProcess::~MainProcess() {
 	delete shmMesasLibres;
 //	delete shmComidaEnMesas;
 	delete shmFacturas;
-
-	delete menu;
 
 }
 

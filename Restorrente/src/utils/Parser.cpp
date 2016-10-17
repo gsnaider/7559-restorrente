@@ -54,7 +54,7 @@ int Parser::getCantComensales(){
 
 Parser::Parser()
 {
-	this->menu = new Menu();
+
 }
 
 Parser::~Parser()
@@ -130,8 +130,8 @@ void Parser::extraerMenu(const pugi::xml_document* doc){
 	   std::string precio = plate.child("precio").first_child().value();
 
 
-	   Plato newPlato = Plato (nombre,string_to_double(precio));
-	   this->menu->agregarPlato(newPlato);
+	   Plato newPlato(nombre,string_to_double(precio));
+	   this->menu.agregarPlato(newPlato);
 	}
 
 }
@@ -166,7 +166,7 @@ int Parser::getCantMesas(){
 int Parser::gentCantMozos(){
 	return this->cantMozos;
 }
-Menu* Parser::getMenu(){
+Menu Parser::getMenu(){
 	return this->menu;
 }
 
