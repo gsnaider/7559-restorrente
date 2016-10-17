@@ -26,8 +26,8 @@ private:
 
 	Pipe* pipePedidosACocinar;
 
-	vector<Semaforo*>* semsFacturas;
-	vector<MemoriaCompartida<double>*>* shmFacturas;
+	vector<Semaforo>* semsFacturas;
+	vector<MemoriaCompartida<double>>* shmFacturas;
 
 	Pipe* pipeLlamadosAMozos;
 
@@ -40,8 +40,8 @@ private:
 	int leerTamanioPedido();
 
 public:
-	CocineroProcess(Pipe* pipePedidosACocinar, vector<Semaforo*>* semsFacturas,
-			vector<MemoriaCompartida<double>*>* shmFacturas,
+	CocineroProcess(Pipe* pipePedidosACocinar, vector<Semaforo>* semsFacturas,
+			vector<MemoriaCompartida<double>>* shmFacturas,
 			Pipe* pipeLlamadosAMozos);
 	void run();
 	virtual ~CocineroProcess();

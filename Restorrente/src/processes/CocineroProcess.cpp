@@ -18,8 +18,8 @@
 using namespace std;
 
 CocineroProcess::CocineroProcess(Pipe* pipePedidosACocinar,
-		vector<Semaforo*>* semsFacturas,
-		vector<MemoriaCompartida<double> *>* shmFacturas,
+		vector<Semaforo>* semsFacturas,
+		vector<MemoriaCompartida<double>>* shmFacturas,
 		Pipe* pipeLlamadosAMozos) {
 
 	this->pipePedidosACocinar = pipePedidosACocinar;
@@ -36,7 +36,7 @@ CocineroProcess::CocineroProcess(Pipe* pipePedidosACocinar,
 void CocineroProcess::inicializarMemoriasCompartidas() {
 
 	for (unsigned int i = 0; i < shmFacturas->size(); i++){
-		shmFacturas->at(i)->crear(SHM_FACTURAS, i);
+		shmFacturas->at(i).crear(SHM_FACTURAS, i);
 	}
 
 }

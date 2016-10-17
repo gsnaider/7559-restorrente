@@ -77,26 +77,27 @@ private:
 	vector<pid_t> idsComensales;
 	pid_t idCocinero;
 
-	Semaforo* semComensalesEnPuerta;
-	Semaforo* semRecepcionistasLibres;
-	Semaforo* semMesasLibres;
-	Semaforo* semPersonasLivingB;
-	Semaforo* semCajaB;
-	Semaforo* semLlamadosAMozos;
-	vector<Semaforo*>* semsLlegoComida;
-	vector<Semaforo*>* semsMesaPago;
-	vector<Semaforo*>* semsFacturas;
-	vector<Semaforo*>* semsMesasLibres;
+
+	Semaforo semComensalesEnPuerta;
+	Semaforo semRecepcionistasLibres;
+	Semaforo semMesasLibres;
+	Semaforo semPersonasLivingB;
+	Semaforo semCajaB;
+	Semaforo semLlamadosAMozos;
+	vector<Semaforo> semsLlegoComida;
+	vector<Semaforo> semsMesaPago;
+	vector<Semaforo> semsFacturas;
+	vector<Semaforo> semsMesasLibres;
 
 
-	MemoriaCompartida<int>* shmPersonasLiving;
-	MemoriaCompartida<double>* shmCaja;
+	MemoriaCompartida<int> shmPersonasLiving;
+	MemoriaCompartida<double> shmCaja;
 
-	vector<MemoriaCompartida<bool>*>* shmMesasLibres;
-	vector<MemoriaCompartida<double>*>* shmFacturas;
+	vector<MemoriaCompartida<bool>> shmMesasLibres;
+	vector<MemoriaCompartida<double>> shmFacturas;
 
-	Pipe* pipeLlamadosAMozos;
-	Pipe* pipePedidosACocinar;
+	Pipe pipeLlamadosAMozos;
+	Pipe pipePedidosACocinar;
 
 	void inicializarIPCs();
 	void inicializarSemaforos();

@@ -22,8 +22,8 @@ namespace std {
 
 GrupoComensalesProcess::GrupoComensalesProcess(int cantPersonas, Semaforo* semRecepcionistasLibres, Semaforo* semComensalesEnPuerta,
 		Semaforo* semPersonasLivingB, MemoriaCompartida<int>* shmPersonasLiving, Semaforo* semMesasLibres,
-		vector<Semaforo*>* semsMesasLibres, vector<MemoriaCompartida<bool>*>* shmMesasLibres,
-		Pipe* pipeLlamadosAMozos, vector<Semaforo*>* semsLlegoComida, vector<Semaforo*>* semsMesaPago, Menu menu) {
+		vector<Semaforo>* semsMesasLibres, vector<MemoriaCompartida<bool>>* shmMesasLibres,
+		Pipe* pipeLlamadosAMozos, vector<Semaforo>* semsLlegoComida, vector<Semaforo>* semsMesaPago, Menu menu) {
 
 	this->mesa = -1; //Despues se setea el valor real.
 
@@ -53,7 +53,7 @@ void GrupoComensalesProcess::inicializarMemoriasCompartidas(){
 	this->shmPersonasLiving->crear(SHM_PERSONAS_LIVING, 0);
 
 	for (unsigned int i = 0; i < shmMesasLibres->size(); i++){
-		shmMesasLibres->at(i)->crear(SHM_MESAS_LIBRES, i);
+		shmMesasLibres->at(i).crear(SHM_MESAS_LIBRES, i);
 	}
 
 }
@@ -66,21 +66,21 @@ int GrupoComensalesProcess::obtenerNumeroMesa(){
 	for (unsigned int i = 0; i < shmMesasLibres->size(); i++){
 
 		cout << getpid() << " " << "DEBUG: Grupo de comensales esperando semsMesasLibres: " << i <<  endl;
-		semsMesasLibres->at(i)->p();
+		semsMesasLibres->at(i).p();
 		cout << getpid() << " " << "DEBUG: Grupo de comensales obtuvo semsMesasLibres: " << i <<  endl;
 		cout << getpid() << " " << "DEBUG: shmMesasLibres size: " << shmMesasLibres->size() <<  endl;
-		bool mesaLibre = shmMesasLibres->at(i)->leer();
+		bool mesaLibre = shmMesasLibres->at(i).leer();
 		cout << getpid() << " " << "DEBUG: Grupo de comensales leyo de shmMesasLibres: " << mesaLibre <<  endl;
 		if (mesaLibre){
 			mesa = i;
 			cout << getpid() << " " << "INFO: Mesa libre encontrada. Nro mesa: " << mesa <<  endl;
 
 			cout << getpid() << " " << "INFO: Ocupando mesa nro: " << mesa <<  endl;
-			shmMesasLibres->at(i)->escribir(false);
+			shmMesasLibres->at(i).escribir(false);
 
 		}
 		cout << getpid() << " " << "DEBUG: Grupo de comensales liberando semsMesasLibres: " << i <<  endl;
-		semsMesasLibres->at(i)->v();
+		semsMesasLibres->at(i).v();
 
 		if (mesaLibre){
 			break;
@@ -161,7 +161,7 @@ void GrupoComensalesProcess::comer(){
 		pipeLlamadosAMozos->escribir(static_cast<const void*>(pedidoStr.c_str()), pedidoStr.size());
 
 		cout << getpid() << " " << "INFO: Grupo de comensales esperando comida." << endl;
-		semsLlegoComida->at(mesa)->p();
+		semsLlegoComida->at(mesa).p();
 		cout << getpid() << " " << "INFO: Grupo de comensales: Llego comida a mesa nro " << mesa << endl;
 
 		cout << getpid() << " " << "INFO: Grupo de comensales empezando a comer" << endl;
@@ -191,10 +191,10 @@ void GrupoComensalesProcess::irse(){
 
 
 	cout << getpid() << " " << "DEBUG: Grupo de comensales esperando semsMesasLibres " << mesa << endl;
-	semsMesasLibres->at(mesa)->p();
+	semsMesasLibres->at(mesa).p();
 	cout << getpid() << " " << "INFO: Grupo de comensales liberando la mesa nro " << mesa << endl;
-	shmMesasLibres->at(mesa)->escribir(true);
-	semsMesasLibres->at(mesa)->v();
+	shmMesasLibres->at(mesa).escribir(true);
+	semsMesasLibres->at(mesa).v();
 
 	cout << getpid() << " " << "INFO: Grupo de comensales se va de la mesa" << endl;
 	semMesasLibres->v();
@@ -215,7 +215,7 @@ void GrupoComensalesProcess::liberarMemoriasCompartidas(){
 	this->shmPersonasLiving->liberar();
 
 	for (unsigned int i = 0; i < shmMesasLibres->size(); i++){
-		shmMesasLibres->at(i)->liberar();
+		shmMesasLibres->at(i).liberar();
 	}
 
 }

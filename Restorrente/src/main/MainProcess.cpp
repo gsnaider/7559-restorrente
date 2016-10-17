@@ -22,20 +22,22 @@
 
 namespace std {
 
-MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, int cantComensales, Menu menu) {
+MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, int cantComensales, Menu menu):
+			semComensalesEnPuerta(SEM_COMENSALES_EN_PUERTA_INIT_FILE, 0, 0),
+			semRecepcionistasLibres(SEM_RECEPCIONISTAS_LIBRES_INIT_FILE, 0, 0), //cada recepcionista suma uno al semaforo cuando se inicia.
+			semMesasLibres(SEM_MESAS_LIBRES_INIT_FILE, cantMesas, 0),
+			semPersonasLivingB(SEM_PERSONAS_LIVING_INIT_FILE, 1, 0),
+			semCajaB(SEM_CAJA_INIT_FILE, 1, 0),
+			semLlamadosAMozos(SEM_LLAMADOS_MOZOS_INIT_FILE, 1, 0)
+
+		{
+
+
 	this->cantRecepcionistas = cantRecepcionistas;
 	this->cantMozos = cantMozos;
 	this->cantMesas = cantMesas;
 	this->cantComensales = cantComensales;
 	this->menu = menu;
-
-
-	semsLlegoComida = new vector<Semaforo*>();
-	semsMesaPago = new vector<Semaforo*>();
-	semsFacturas = new vector<Semaforo*>();
-	semsMesasLibres = new vector<Semaforo*>();
-	shmMesasLibres = new vector<MemoriaCompartida<bool>*>();
-	shmFacturas = new vector<MemoriaCompartida<double>*>();
 
 
 	inicializarIPCs();
@@ -46,8 +48,8 @@ void MainProcess::iniciarProcesoCocinero(){
 	Logger::log(logId, "Iniciando cocinero", DEBUG);
 	pid_t idCocinero = fork();
 	if (idCocinero == 0){
-		CocineroProcess cocinero(pipePedidosACocinar, semsFacturas,
-				shmFacturas, pipeLlamadosAMozos);
+		CocineroProcess cocinero(&pipePedidosACocinar, &semsFacturas,
+				&shmFacturas, &pipeLlamadosAMozos);
 		cocinero.run();
 		exit(0);
 	} else {
@@ -64,8 +66,8 @@ void MainProcess::iniciarProcesosMozo(){
 		pid_t idMozo = fork();
 
 		if (idMozo == 0){
-			MozoProcess mozo(pipeLlamadosAMozos, pipePedidosACocinar, semLlamadosAMozos,
-					semsLlegoComida, semsFacturas, shmFacturas, semCajaB, shmCaja, semsMesaPago);
+			MozoProcess mozo(&pipeLlamadosAMozos, &pipePedidosACocinar, &semLlamadosAMozos,
+					&semsLlegoComida, &semsFacturas, &shmFacturas, &semCajaB, &shmCaja, &semsMesaPago);
 			mozo.run();
 			exit(0);
 		} else {
@@ -82,7 +84,7 @@ void MainProcess::iniciarProcesosRecepcionista(){
 		pid_t idRecepcionista = fork();
 
 		if (idRecepcionista == 0){
-			RecepcionistaProcess recepcionista(semRecepcionistasLibres, semComensalesEnPuerta);
+			RecepcionistaProcess recepcionista(&semRecepcionistasLibres, &semComensalesEnPuerta);
 			recepcionista.run();
 			exit(0);
 		} else {
@@ -98,38 +100,27 @@ void MainProcess::inicializarProcesosRestaurant(){
 }
 
 void MainProcess::inicializarSemaforos(){
-	semComensalesEnPuerta = new Semaforo(SEM_COMENSALES_EN_PUERTA_INIT_FILE, 0, 0);
-	semRecepcionistasLibres = new Semaforo(SEM_RECEPCIONISTAS_LIBRES_INIT_FILE, 0, 0); //cada recepcionista suma uno al semaforo cuando se inicia.
-	semMesasLibres = new Semaforo(SEM_MESAS_LIBRES_INIT_FILE, cantMesas, 0);
-	semPersonasLivingB = new Semaforo(SEM_PERSONAS_LIVING_INIT_FILE, 1, 0);
-	semCajaB = new Semaforo(SEM_CAJA_INIT_FILE, 1, 0);
-	semLlamadosAMozos = new Semaforo(SEM_LLAMADOS_MOZOS_INIT_FILE, 1, 0);
 
 	for(int i = 0; i < cantMesas; i++){
-		semsLlegoComida->push_back(new Semaforo(SEMS_LLEGO_COMIDA_INIT_FILE, 0, i));
-		semsMesaPago->push_back(new Semaforo(SEMS_MESA_PAGO_INIT_FILE, 0, i));
-		semsFacturas->push_back(new Semaforo(SEMS_FACTURA_INIT_FILE, 1, i));
-		semsMesasLibres->push_back(new Semaforo(SEMS_MESAS_LIBRES_INIT_FILE, 1, i));
-//		semsComidaEnMesas->push_back(new Semaforo(SEMS_COMIDA_MESAS_INIT_FILE, 1, i));
+		semsLlegoComida.push_back(Semaforo(SEMS_LLEGO_COMIDA_INIT_FILE, 0, i));
+		semsMesaPago.push_back(Semaforo(SEMS_MESA_PAGO_INIT_FILE, 0, i));
+		semsFacturas.push_back(Semaforo(SEMS_FACTURA_INIT_FILE, 1, i));
+		semsMesasLibres.push_back(Semaforo(SEMS_MESAS_LIBRES_INIT_FILE, 1, i));
 	}
 }
 
 void MainProcess::inicializarMemoriasCompartidas(){
-	semPersonasLivingB->p();
-	shmPersonasLiving = new MemoriaCompartida<int>();
 
-	semCajaB->p();
-	shmCaja = new MemoriaCompartida<double>();
+	// Bloqueo para primero crear los procesos, y despues asignarles los valores iniciales sin que ningun proceso hijo acceda antes.
+	semPersonasLivingB.p();
+	semCajaB.p();
 
 	for(int i = 0; i < cantMesas; i++){
-		semsFacturas->at(i)->p();
-		shmFacturas->push_back(new MemoriaCompartida<double>());
+		semsFacturas.at(i).p();
+		shmFacturas.push_back(MemoriaCompartida<double>());
 
-		semsMesasLibres->at(i)->p();
-		shmMesasLibres->push_back(new MemoriaCompartida<bool>());
-
-//		semsComidaEnMesas->at(i)->p();
-//		shmComidaEnMesas->push_back(new MemoriaCompartida<Comida>());
+		semsMesasLibres.at(i).p();
+		shmMesasLibres.push_back(MemoriaCompartida<bool>());
 	}
 }
 
@@ -137,25 +128,23 @@ void MainProcess::crearMemoriasCompartidas(){
 
 	cout << getpid() << " " << "DEBUG: Main: Comenzando inicializacion de memorias compartidas." << endl;
 
-	shmPersonasLiving->crear(SHM_PERSONAS_LIVING, 0);
-	shmPersonasLiving->escribir(0);
-	semPersonasLivingB->v();
+	shmPersonasLiving.crear(SHM_PERSONAS_LIVING, 0);
+	shmPersonasLiving.escribir(0);
+	semPersonasLivingB.v();
 
-	shmCaja->crear(SHM_CAJA, 0);
-	shmCaja->escribir(0);
-	semCajaB->v();
+	shmCaja.crear(SHM_CAJA, 0);
+	shmCaja.escribir(0);
+	semCajaB.v();
 
 	for(int i = 0; i < cantMesas; i++){
-		shmFacturas->at(i)->crear(SHM_FACTURAS, i);
-		shmFacturas->at(i)->escribir(0);
-		semsFacturas->at(i)->v();
+		shmFacturas.at(i).crear(SHM_FACTURAS, i);
+		shmFacturas.at(i).escribir(0);
+		semsFacturas.at(i).v();
 
-		shmMesasLibres->at(i)->crear(SHM_MESAS_LIBRES, i);
-		shmMesasLibres->at(i)->escribir(true);
-		semsMesasLibres->at(i)->v();
+		shmMesasLibres.at(i).crear(SHM_MESAS_LIBRES, i);
+		shmMesasLibres.at(i).escribir(true);
+		semsMesasLibres.at(i).v();
 
-//		shmComidaEnMesas->at(i)->crear(SHM_COMIDA_MESAS, i);
-//		semsComidaEnMesas->at(i)->v();
 
 	}
 
@@ -163,8 +152,7 @@ void MainProcess::crearMemoriasCompartidas(){
 }
 
 void MainProcess::inicializarPipesFifos(){
-	pipeLlamadosAMozos = new Pipe();
-	pipePedidosACocinar = new Pipe();
+
 }
 
 
@@ -200,10 +188,10 @@ void MainProcess::inicializarComensalesComensales(){
 		if (idComensal == 0){
 			int cantPersonas = RandomUtil::randomInt(MAX_PERSONAS_POR_GRUPO) + 1;
 
-			GrupoComensalesProcess grupoComensalesProcess(cantPersonas, semRecepcionistasLibres, semComensalesEnPuerta,
-					semPersonasLivingB, shmPersonasLiving, semMesasLibres,
-					semsMesasLibres, shmMesasLibres,
-					pipeLlamadosAMozos, semsLlegoComida, semsMesaPago, menu);
+			GrupoComensalesProcess grupoComensalesProcess(cantPersonas, &semRecepcionistasLibres, &semComensalesEnPuerta,
+					&semPersonasLivingB, &shmPersonasLiving, &semMesasLibres,
+					&semsMesasLibres, &shmMesasLibres,
+					&pipeLlamadosAMozos, &semsLlegoComida, &semsMesaPago, menu);
 			grupoComensalesProcess.run();
 			exit(0);
 		} else {
@@ -234,68 +222,46 @@ void MainProcess::run(){
 
 void MainProcess::eliminarSemaforos(){
 
-	semComensalesEnPuerta->eliminar();
-	delete semComensalesEnPuerta;
+	semComensalesEnPuerta.eliminar();
 
-	semRecepcionistasLibres->eliminar();
-	delete semRecepcionistasLibres;
+	semRecepcionistasLibres.eliminar();
 
-	semMesasLibres->eliminar();
-	delete semMesasLibres;
+	semMesasLibres.eliminar();
 
-	semPersonasLivingB->eliminar();
-	delete semPersonasLivingB;
+	semPersonasLivingB.eliminar();
 
-	semCajaB->eliminar();
-	delete semCajaB;
+	semCajaB.eliminar();
 
-	semLlamadosAMozos->eliminar();
-	delete semLlamadosAMozos;
+	semLlamadosAMozos.eliminar();
 
 	for(int i = 0; i < cantMesas; i++){
-		semsLlegoComida->at(i)->eliminar();
-		delete semsLlegoComida->at(i);
+		semsLlegoComida.at(i).eliminar();
 
-		semsMesaPago->at(i)->eliminar();
-		delete semsMesaPago->at(i);
+		semsMesaPago.at(i).eliminar();
 
-		semsFacturas->at(i)->eliminar();
-		delete semsFacturas->at(i);
+		semsFacturas.at(i).eliminar();
 
-		semsMesasLibres->at(i)->eliminar();
-		delete semsMesasLibres->at(i);
-
-//		semsComidaEnMesas->at(i)->eliminar();
-//		delete semsComidaEnMesas->at(i);
+		semsMesasLibres.at(i).eliminar();
 
 	}
 }
 
 void MainProcess::eliminarMemoriasCompartidas(){
 
-	shmPersonasLiving->liberar();
-	delete shmPersonasLiving;
+	shmPersonasLiving.liberar();
 
-	shmCaja->liberar();
-	delete shmCaja;
+	shmCaja.liberar();
 
 	for(int i = 0; i < cantMesas; i++){
 
-		shmFacturas->at(i)->liberar();
-		delete shmFacturas->at(i);
+		shmFacturas.at(i).liberar();
 
-		shmMesasLibres->at(i)->liberar();
-		delete shmMesasLibres->at(i);
-
-//		shmComidaEnMesas->at(i)->liberar();
-//		delete shmComidaEnMesas->at(i);
+		shmMesasLibres.at(i).liberar();
 
 	}
 }
 
 void MainProcess::eliminarPipesFifos(){
-	delete pipeLlamadosAMozos;
-	delete pipePedidosACocinar;
 }
 
 
@@ -309,14 +275,6 @@ MainProcess::~MainProcess() {
 
 	eliminarIPCs();
 
-	delete semsLlegoComida;
-	delete semsMesaPago;
-	delete semsFacturas;
-	delete semsMesasLibres;
-//	delete semsComidaEnMesas;
-	delete shmMesasLibres;
-//	delete shmComidaEnMesas;
-	delete shmFacturas;
 
 }
 
