@@ -17,7 +17,7 @@
 #include "../utils/ipc/semaphore/Semaforo.h"
 #include "../utils/ipc/shared-memory/MemoriaCompartida.h"
 #include "../utils/ipc/pipe/Pipe.h"
-#include "../utils/Logger.h"
+#include "../utils/logger/Logger.h"
 
 
 

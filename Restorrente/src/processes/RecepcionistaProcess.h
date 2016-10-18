@@ -9,7 +9,7 @@
 #define PROCESSES_RECEPCIONISTAPROCESS_H_
 
 #include "../utils/ipc/semaphore/Semaforo.h"
-#include "../utils/Logger.h"
+#include "../utils/logger/Logger.h"
 
 namespace std {
 

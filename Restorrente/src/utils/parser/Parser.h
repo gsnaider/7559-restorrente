@@ -10,10 +10,10 @@
 
 #include <string>
 #include <algorithm>
-#include "pugixml/pugixml.hpp"
-#include "../model/Menu.h"
+#include "../../model/Menu.h"
 #include <sstream>
 #include <iostream>
+#include "pugixml/pugixml.hpp"
 
 
 class Parser
