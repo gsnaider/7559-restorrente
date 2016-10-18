@@ -73,7 +73,6 @@ int GrupoComensalesProcess::obtenerNumeroMesa(){
 		Logger::log(comensalLogId, "shmMesasLibre size: " + Logger::intToString(shmMesasLibres->size()), DEBUG);
 
 		bool mesaLibre = shmMesasLibres->at(i).leer();
-		//cout << getpid() << " " << "DEBUG: Grupo de comensales leyo de shmMesasLibres: " << mesaLibre <<  endl;
 		//anda bien sumar string + bool? Calculo que si
 		Logger::log(comensalLogId, "Grupo de comensales leyo de shmMesasLibres: " + mesaLibre, DEBUG);
 

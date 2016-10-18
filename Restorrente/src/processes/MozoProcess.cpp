@@ -117,7 +117,7 @@ void MozoProcess::procesarPedidoCuenta(PedidoCuenta pedidoCuenta) {
 	Logger::log(mozoLogId, "Mozo esperando semsFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
 
 	semsFacturas->at(mesa).p();
-	Logger::log(mozoLogId, "Mozo obtuvo semsFacturas[" + Logger::intToString(mesa) + "]", INFO);
+	Logger::log(mozoLogId, "Mozo obtuvo semsFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
 
 	Logger::log(mozoLogId, "Mozo leyendo shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
 

@@ -39,9 +39,9 @@ Logger::Logger()
 {
     log_path = "../restorrente.log";
     mode = INFO; //Por default se esta creando en INFO
-    mode_symbols[0] = "DEBUG.\t";
-    mode_symbols[1] = "ERROR.\t";
-    mode_symbols[2] = "INFO.\t";
+    mode_symbols[0] = "DEBUG";
+    mode_symbols[1] = "ERROR";
+    mode_symbols[2] = "INFO";
 
     log_timestamp();
 }
@@ -94,10 +94,11 @@ std::string Logger::timeHMSmu(){
 
 void Logger::_log(std::string name, std::string comment, LOG_MODE comment_mode){
 	if(comment_mode >= mode){
-        std::string out_final = this->timeHMSmu() + "\t" +
-                                name + "\t" +
+        std::string out_final = this->timeHMSmu() + "\t\t" +
+        						mode_symbols[comment_mode] + "\t" +
                                 intToString(getpid()) + "\t" +
-                                mode_symbols[comment_mode] + comment + "\n";
+								name + "\t" +
+                                comment + "\n";
 
         LockFile log("../restorrente.log");
         log.tomarLock();
