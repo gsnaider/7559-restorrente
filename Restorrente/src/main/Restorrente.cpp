@@ -30,12 +30,6 @@ int main() {
 	int cantRecepcionistas = p.getCantRecepcionistas();
 	int cantMesas = p.getCantMesas();
 	int cantComensales = p.getCantComensales();
-
-	cout << "Cantidad de Mozos: " << cantMozos << endl;
-	cout << "Cantidad de Recepcionistas: " << cantRecepcionistas << endl;
-	cout << "Cantidad de Mesas: " << cantMesas << endl;
-	cout << "Cantidad de Comensales: " << cantComensales << endl;
-	cout << "nivelDeLog: " << nivelDeLog << endl;
 	Menu menu = p.getMenu();
 
 	LOG_MODE mode;
@@ -45,10 +39,14 @@ int main() {
 
 	Logger::setMode(mode);
 
-	Logger::log("Restorrente main", "Llamo a mainProcess", DEBUG);
+	Logger::log(mainLogId, "Cantidad de Mozos: " + Logger::intToString(cantMozos), INFO);
+	Logger::log(mainLogId, "Cantidad de Recepcionistas: " + Logger::intToString(cantRecepcionistas), INFO);
+	Logger::log(mainLogId, "Cantidad de Mesas: " + Logger::intToString(cantMesas), INFO);
+	Logger::log(mainLogId, "Cantidad de Comensales: " + Logger::intToString(cantComensales), INFO);
+	Logger::log(mainLogId, "nivelDeLog: " + Logger::intToString(nivelDeLog), INFO);
+
 	MainProcess mainProcess(cantRecepcionistas, cantMozos, cantMesas, cantComensales, menu);
 
-	Logger::log("Restorrente main", "Corro el mainProcess", DEBUG);
 	mainProcess.run();
 
 

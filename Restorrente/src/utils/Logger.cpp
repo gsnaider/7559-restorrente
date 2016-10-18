@@ -19,7 +19,7 @@ void Logger::setMode(LOG_MODE mode){
 	getInstance()->mode = mode;
 }
 
-std::string Logger::integerToString ( int number )
+std::string Logger::intToString ( int number )
 {
    std::ostringstream ss;
    ss << number;
@@ -88,7 +88,7 @@ void Logger::_log(std::string name, std::string comment, LOG_MODE comment_mode){
 	if(comment_mode >= mode){
         std::string out_final = this->timeHMSmu() + "\t" +
                                 name + "\t" +
-                                integerToString(getpid()) + "\t" +
+                                intToString(getpid()) + "\t" +
                                 mode_symbols[comment_mode] + comment + "\n";
 
         LockFile log("../restorrente.log");

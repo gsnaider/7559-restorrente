@@ -110,7 +110,7 @@ Pedido GrupoComensalesProcess::generarPedido() {
 
 
 void GrupoComensalesProcess::llegar(){
-
+	Logger::log(comensalLogId, "Llega grupo de comensales de "+ Logger::intToString(cantPersonas) + " personas", INFO);
 	cout << getpid() << " " << "INFO: Llega grupo de comensales de " << cantPersonas << " personas" <<  endl;
 	semComensalesEnPuerta->v();
 	cout << getpid() << " " << "INFO: Grupo de comensales esperando recepcionista libre" << endl;
