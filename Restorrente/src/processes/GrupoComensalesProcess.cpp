@@ -145,6 +145,7 @@ void GrupoComensalesProcess::llegar(){
 	mesa = obtenerNumeroMesa();
 }
 
+
 void GrupoComensalesProcess::comer(){
 	bool seguirPidiendo = true;
 	int i = 0;
@@ -185,18 +186,37 @@ void GrupoComensalesProcess::comer(){
 	}
 }
 
-void GrupoComensalesProcess::irse(){
+void GrupoComensalesProcess::pagar(){
 
-	//TODO pagar
+	cout << getpid() << " " << "INFO: Grupo de comensales pidiendo la cuenta." << endl;
+
+	PedidoCuenta pedidoCuenta(mesa);
+	string pedidoCuentaStr = LlamadoAMozoSerializer::serializar(pedidoCuenta);
+
+	cout << getpid() << " " << "DEBUG: Grupo de comensales escribiendo en pipeLlamadosAMozos: " << pedidoCuentaStr << endl;
+
+	pipeLlamadosAMozos->escribir(static_cast<const void*>(pedidoCuentaStr.c_str()), pedidoCuentaStr.size());
+
+	cout << getpid() << " " << "INFO: Grupo de comensales esperando para pagar." << endl;
+
+	semsMesaPago->at(mesa).p();
+
+}
+
+void GrupoComensalesProcess::irse(){
 
 
 	cout << getpid() << " " << "DEBUG: Grupo de comensales esperando semsMesasLibres " << mesa << endl;
+
 	semsMesasLibres->at(mesa).p();
+
 	cout << getpid() << " " << "INFO: Grupo de comensales liberando la mesa nro " << mesa << endl;
+
 	shmMesasLibres->at(mesa).escribir(true);
 	semsMesasLibres->at(mesa).v();
 
 	cout << getpid() << " " << "INFO: Grupo de comensales se va de la mesa" << endl;
+
 	semMesasLibres->v();
 
 }
@@ -207,9 +227,8 @@ void GrupoComensalesProcess::run(){
 	Logger::log(comensalLogId, "Iniciando grupo de comensales comensal", DEBUG);
 
 	llegar();
-
 	comer();
-
+	pagar();
 	irse();
 }
 

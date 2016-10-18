@@ -47,6 +47,7 @@ private:
 
 	void llegar();
 	void comer();
+	void pagar();
 	void irse();
 
 	int obtenerNumeroMesa();

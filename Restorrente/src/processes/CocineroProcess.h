@@ -34,6 +34,8 @@ private:
 	void inicializarMemoriasCompartidas();
 	void liberarMemoriasCompartidas();
 
+	void facturar(int mesa, Plato plato);
+
 	Comida cocinar(Pedido pedido);
 
 	string leerPedido(int tamanioPedido);

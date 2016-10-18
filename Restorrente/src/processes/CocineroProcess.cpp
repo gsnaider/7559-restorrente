@@ -81,6 +81,33 @@ string CocineroProcess::leerPedido(int tamanioPedido) {
 	return pedido;
 }
 
+void CocineroProcess::facturar(int mesa, Plato plato){
+	double precioPlato = plato.getPrecio();
+
+	cout << getpid() << " " << "DEBUG: Cocinero esperando semsFacturas[" << mesa << "]" << endl;
+	semsFacturas->at(mesa).p();
+	cout << getpid() << " " << "DEBUG: Cocinero obtuvo semsFacturas[" << mesa << "]" << endl;
+
+	cout << getpid() << " " << "DEBUG: Cocinero leyendo shmFacturas[" << mesa << "]" << endl;
+	double facturaActual = shmFacturas->at(mesa).leer();
+	cout << getpid() << " " << "DEBUG: Cocinero leyo " << facturaActual << " de shmFacturas[" << mesa << "]" << endl;
+
+
+	cout << getpid() << " " << "INFO: Cocinero sumando $" << precioPlato << " a cuenta de mesa " << mesa << endl;
+
+	double facturaActualizada = facturaActual + precioPlato;
+
+	cout << getpid() << " " << "DEBUG: Cocinero escribiendo en shmFacturas[" << mesa << "]" << endl;
+
+	shmFacturas->at(mesa).escribir(facturaActualizada);
+
+	cout << getpid() << " " << "INFO: Factura actual de mesa " << mesa << ": $" << facturaActualizada << endl;
+
+	cout << getpid() << " " << "DEBUG: Cocinero escribio en shmFacturas[" << mesa << "]" << endl;
+
+	semsFacturas->at(mesa).v();
+}
+
 Comida CocineroProcess::cocinar(Pedido pedido) {
 	cout << getpid() << " " << "INFO: Cocinero recibio un pedido de mesa " << pedido.getMesa() << endl;
 
@@ -95,30 +122,7 @@ Comida CocineroProcess::cocinar(Pedido pedido) {
 
 		comida.agregarPlato(pedido.getPlatos().at(i));
 
-		double precioPlato = pedido.getPlatos().at(i).getPrecio();
-
-		cout << getpid() << " " << "DEBUG: Cocinero esperando semsFacturas[" << pedido.getMesa() << "]" << endl;
-		semsFacturas->at(pedido.getMesa()).p();
-		cout << getpid() << " " << "DEBUG: Cocinero obtuvo semsFacturas[" << pedido.getMesa() << "]" << endl;
-
-		cout << getpid() << " " << "DEBUG: Cocinero leyendo shmFacturas[" << pedido.getMesa() << "]" << endl;
-		double facturaActual = shmFacturas->at(pedido.getMesa()).leer();
-		cout << getpid() << " " << "DEBUG: Cocinero leyo " << facturaActual << " de shmFacturas[" << pedido.getMesa() << "]" << endl;
-
-
-		cout << getpid() << " " << "INFO: Cocinero sumando $" << precioPlato << " a cuenta de mesa " << pedido.getMesa() << endl;
-
-		double facturaActualizada = facturaActual + precioPlato;
-
-		cout << getpid() << " " << "DEBUG: Cocinero escribiendo en shmFacturas[" << pedido.getMesa() << "]" << endl;
-
-		shmFacturas->at(pedido.getMesa()).escribir(facturaActualizada);
-
-		cout << getpid() << " " << "INFO: Factura actual de mesa " << pedido.getMesa() << ": $" << facturaActualizada << endl;
-
-		cout << getpid() << " " << "DEBUG: Cocinero escribio en shmFacturas[" << pedido.getMesa() << "]" << endl;
-
-		semsFacturas->at(pedido.getMesa()).v();
+		facturar(pedido.getMesa(),pedido.getPlatos().at(i));
 
 	}
 

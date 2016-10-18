@@ -108,8 +108,46 @@ void MozoProcess::procesarComida(Comida comida) {
 }
 
 void MozoProcess::procesarPedidoCuenta(PedidoCuenta pedidoCuenta) {
-	cout << getpid() << " " << "INFO: Mozo recibiendo cuenta de mesa " << pedidoCuenta.getMesa() << endl;
-	sleep(5);
+
+	int mesa = pedidoCuenta.getMesa();
+
+	cout << getpid() << " " << "INFO: Mozo recibiendo cuenta de mesa " << mesa << endl;
+
+	cout << getpid() << " " << "DEBUG: Mozo esperando semsFacturas[" << mesa << "]" << endl;
+	semsFacturas->at(mesa).p();
+	cout << getpid() << " " << "DEBUG: Mozo obtuvo semsFacturas[" << mesa << "]" << endl;
+
+	cout << getpid() << " " << "DEBUG: Mozo leyendo shmFacturas[" << mesa << "]" << endl;
+	double factura = shmFacturas->at(mesa).leer();
+	cout << getpid() << " " << "DEBUG: Mozo leyo " << factura << " de shmFacturas[" << mesa << "]" << endl;
+
+	cout << getpid() << " " << "INFO: Mesa " << mesa << ": pagando factura: $"<< factura << endl;
+
+	cout << getpid() << " " << "DEBUG: Mozo esperando semCajaB" << endl;
+	semCajaB->p();
+	cout << getpid() << " " << "DEBUG: Mozo escribiendo 0 en shmFacturas[" << mesa << "]" << endl;
+	shmFacturas->at(mesa).escribir(0);
+
+	cout << getpid() << " " << "DEBUG: Mozo leyendo shmCaja" << endl;
+
+	double cajaActual = shmCaja->leer();
+
+	cout << getpid() << " " << "DEBUG: Mozo leyo " << cajaActual << " de shmCaja" << endl;
+
+	cout << getpid() << " " << "INFO: Mozo sumando $" << factura << " a la caja" << endl;
+
+	double cajaActualizada = cajaActual + factura;
+
+	shmCaja->escribir(cajaActualizada);
+
+	cout << getpid() << " " << "INFO: Valor actual de caja: $" << cajaActualizada << endl;
+
+	semCajaB->v();
+	semsFacturas->at(mesa).v();
+	semsMesaPago->at(mesa).v();
+
+	cout << getpid() << " " << "DEBUG: Mozo libero  semCajaB, semsFacturas[" << mesa << "] y semsMesaPago[" << mesa << "]" << endl;
+
 
 }
 
