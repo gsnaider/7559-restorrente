@@ -204,6 +204,8 @@ void GrupoComensalesProcess::irse(){
 
 void GrupoComensalesProcess::run(){
 	cout << "DEBUG: Iniciando grupo de comensales con pid: " << getpid() << endl;
+	Logger::log(comensalLogId, "Iniciando grupo de comensales comensal", DEBUG);
+
 	llegar();
 
 	comer();

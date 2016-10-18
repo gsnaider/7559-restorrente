@@ -32,6 +32,7 @@ private:
 	Pipe* pipeLlamadosAMozos;
 
 	void inicializarMemoriasCompartidas();
+	void liberarMemoriasCompartidas();
 
 	Comida cocinar(Pedido pedido);
 

@@ -24,7 +24,11 @@
 namespace std {
 
 const int MAX_PERSONAS_POR_GRUPO = 5;
-const string logId = "MainProcess";
+const string mainLogId = "Main";
+const string comensalLogId = "Comens";
+const string recepcionistaLogId = "Recep";
+const string mozoLogId = "Mozo";
+const string cocineroLogId = "Cocin";
 
 /*
 // PARA CORRER DESDE ECLIPSE

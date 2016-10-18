@@ -140,35 +140,33 @@ void MozoProcess::run(){
 		cout << getpid() << " " << "DEBUG: Mozo recibio tipo de llamado: " << tipoLlamado << endl;
 
 		switch (tipoLlamado) {
-		case LlamadoAMozoSerializer::PEDIDO: {
+			case LlamadoAMozoSerializer::PEDIDO: {
 
-			cout << getpid() << " " << "INFO: Mozo recibio un pedido de una mesa" << endl;
+				cout << getpid() << " " << "INFO: Mozo recibio un pedido de una mesa" << endl;
 
-			Pedido pedido = LlamadoAMozoSerializer::deserializarPedido(llamado);
-			procesarPedido(pedido);
-			break;
-		}
-		case LlamadoAMozoSerializer::COMIDA: {
+				Pedido pedido = LlamadoAMozoSerializer::deserializarPedido(llamado);
+				procesarPedido(pedido);
+				break;
+			}
+			case LlamadoAMozoSerializer::COMIDA: {
 
-			cout << getpid() << " " << "INFO: Mozo recibio comida para llevar a una mesa" << endl;
+				cout << getpid() << " " << "INFO: Mozo recibio comida para llevar a una mesa" << endl;
 
-			Comida comida = LlamadoAMozoSerializer::deserializarComida(llamado);
-			procesarComida(comida);
-			break;
-		}
-		case LlamadoAMozoSerializer::PEDIDO_CUENTA: {
+				Comida comida = LlamadoAMozoSerializer::deserializarComida(llamado);
+				procesarComida(comida);
+				break;
+			}
+			case LlamadoAMozoSerializer::PEDIDO_CUENTA: {
 
-			cout << getpid() << " " << "INFO: Mozo recibio un pedido de cuenta" << endl;
+				cout << getpid() << " " << "INFO: Mozo recibio un pedido de cuenta" << endl;
 
-			PedidoCuenta pedidoCuenta = LlamadoAMozoSerializer::deserializarPedidoCuenta(llamado);
-			procesarPedidoCuenta(pedidoCuenta);
-			break;
-		}
+				PedidoCuenta pedidoCuenta = LlamadoAMozoSerializer::deserializarPedidoCuenta(llamado);
+				procesarPedidoCuenta(pedidoCuenta);
+				break;
+			}
 		}
 
 		semLlamadosAMozos->v();
-
-
 
 	}
 }
