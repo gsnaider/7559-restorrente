@@ -123,7 +123,6 @@ void MainProcess::inicializarMemoriasCompartidas(){
 
 void MainProcess::crearMemoriasCompartidas(){
 
-	cout << getpid() << " " << "DEBUG: Main: Comenzando inicializacion de memorias compartidas." << endl;
 	Logger::log(mainLogId, "Comenzando inicializacion de memorias compartidas ", DEBUG);
 	shmPersonasLiving.crear(SHM_PERSONAS_LIVING, 0);
 	shmPersonasLiving.escribir(0);

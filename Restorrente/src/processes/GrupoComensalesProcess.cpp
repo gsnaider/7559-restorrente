@@ -223,7 +223,6 @@ void GrupoComensalesProcess::pagar(){
 void GrupoComensalesProcess::irse(){
 
 
-	cout << getpid() << " " << "DEBUG: Grupo de comensales esperando semsMesasLibres " << mesa << endl;
 	Logger::log(comensalLogId, "Grupo de comensales esperando semsMesasLibres " + Logger::intToString(mesa), DEBUG);
 
 	semsMesasLibres->at(mesa).p();

@@ -17,7 +17,6 @@
 using namespace std;
 
 int main() {
-	//TODO Reemplazar todos los cout por el log.
 
 	Parser p = Parser();
 	p.parsearDocumento("../SetUp.xml");

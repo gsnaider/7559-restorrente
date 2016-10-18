@@ -47,11 +47,11 @@ int MozoProcess::leerTamanioLlamado(){
 	string tamanioPedidoStr;
 	bool finLectura = false;
 
-	cout << getpid() << " " << "DEBUG: Mozo esperando para leer tamanio de pedido"<< endl;
+	Logger::log(mozoLogId, "Mozo esperando para leer tamanio de pedido", DEBUG);
 	do{
-		cout << getpid() << " " << "DEBUG: Mozo esperando para leer pipeLlamadosAMozos"<< endl;
+		Logger::log(mozoLogId, "Mozo esperando para leer pipeLlamadosAMozos", DEBUG);
 		pipeLlamadosAMozos->leer(static_cast<void*>(&tamanioPedidoChar),sizeof(char));
-		cout << getpid() << " " << "DEBUG: Mozo leyo " << tamanioPedidoChar << " de pipeLlamadosAMozos"<< endl;
+		Logger::log(mozoLogId, "Mozo leyo " + Logger::intToString(tamanioPedidoChar) + " de pipeLlamadosAMozos", DEBUG);
 		finLectura = (tamanioPedidoChar == LlamadoAMozoSerializer::SEPARADOR);
 		if (!finLectura){
 			tamanioPedidoStr += tamanioPedidoChar;
@@ -66,43 +66,43 @@ string MozoProcess::leerLlamado(int tamanioLlamado){
 	 char buffer[tamanioLlamado];
 	 string llamado;
 
-	cout << getpid() << " " << "DEBUG: Mozo esperando para leer pipeLlamadosAMozos"<< endl;
+	Logger::log(mozoLogId, "Mozo esperando para leer pipeLlamadosAMozos", DEBUG);
 
 	pipeLlamadosAMozos->leer(static_cast<void*>(buffer),tamanioLlamado);
 
-	cout << getpid() << " " << "DEBUG: Mozo termino de leer pipeLlamadosAMozos"<< endl;
+	Logger::log(mozoLogId, "Mozo termino de leerpipLlamadosAMozos", DEBUG);
 
 	llamado = buffer;
-	cout << getpid() << " " << "DEBUG: Mozo leyo " << llamado << " de pipeLlamadosAMozos"<< endl;
+	Logger::log(mozoLogId, "Mozo leyo " + llamado + " de pipeLlamadosAMozos", DEBUG);
 
 	return llamado;
 }
 
 
 void MozoProcess::procesarPedido(Pedido pedido) {
-	cout << getpid() << " " << "INFO: Mozo tomando pedido de mesa " << pedido.getMesa() << endl;
+	Logger::log(mozoLogId, "Mozo tomando pedido de mesa " + Logger::intToString(pedido.getMesa()), INFO);
 
 	for (unsigned int i = 0; i < pedido.getPlatos().size(); i++){
-		cout << getpid() << " " << "INFO: Mozo tomando pedido de " << pedido.getPlatos().at(i).getNombre() << endl;
+		Logger::log(mozoLogId, "Mozo tomando pedido de " + pedido.getPlatos().at(i).getNombre(), INFO);
 	}
 
 	string pedidoStr = LlamadoAMozoSerializer::serializar(pedido);
 
-	cout << getpid() << " " << "DEBUG: Mozo escribiendo en pipePedidosACocinar: " << pedidoStr << endl;
+	Logger::log(mozoLogId, "Mozo escribiendo en pipePedidosACocinar: " + pedidoStr, DEBUG);
 	pipePedidosACocinar->escribir(static_cast<const void*>(pedidoStr.c_str()), pedidoStr.size());
 
-	cout << getpid() << " " << "INFO: Mozo mando el pedido de la mesa " << pedido.getMesa() << " a la cocina." << endl;
+	Logger::log(mozoLogId, "Mozo mando el pedido de la mesa " + Logger::intToString(pedido.getMesa()) + " a la cocina.", INFO);
 
 }
 
 void MozoProcess::procesarComida(Comida comida) {
-	cout << getpid() << " " << "INFO: Mozo recibiendo comida para mesa " << comida.getMesa() << endl;
+	Logger::log(mozoLogId, "Mozo recibiendo comida para mesa " + Logger::intToString(comida.getMesa()), INFO);
+
+	Logger::log(mozoLogId, "Mozo llevando comida a mesa " + Logger::intToString(comida.getMesa()), INFO);
 
 
-	cout << getpid() << " " << "INFO: Mozo llevando comida a mesa " << comida.getMesa() << endl;
+	Logger::log(mozoLogId, "Mozo dejando comida en mesa " + Logger::intToString(comida.getMesa()), INFO);
 
-
-	cout << getpid() << " " << "INFO: Mozo dejando comida en mesa " << comida.getMesa() << endl;
 	semsLlegoComida->at(comida.getMesa()).v();
 
 }
@@ -111,76 +111,83 @@ void MozoProcess::procesarPedidoCuenta(PedidoCuenta pedidoCuenta) {
 
 	int mesa = pedidoCuenta.getMesa();
 
-	cout << getpid() << " " << "INFO: Mozo recibiendo cuenta de mesa " << mesa << endl;
+	Logger::log(mozoLogId, "Mozo recibiendo cuenta de mesa " + Logger::intToString(mesa), INFO);
 
-	cout << getpid() << " " << "DEBUG: Mozo esperando semsFacturas[" << mesa << "]" << endl;
+
+	Logger::log(mozoLogId, "Mozo esperando semsFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
+
 	semsFacturas->at(mesa).p();
-	cout << getpid() << " " << "DEBUG: Mozo obtuvo semsFacturas[" << mesa << "]" << endl;
+	Logger::log(mozoLogId, "Mozo obtuvo semsFacturas[" + Logger::intToString(mesa) + "]", INFO);
 
-	cout << getpid() << " " << "DEBUG: Mozo leyendo shmFacturas[" << mesa << "]" << endl;
+	Logger::log(mozoLogId, "Mozo leyendo shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
+
 	double factura = shmFacturas->at(mesa).leer();
-	cout << getpid() << " " << "DEBUG: Mozo leyo " << factura << " de shmFacturas[" << mesa << "]" << endl;
+	Logger::log(mozoLogId, "Mozo leyo " + Logger::doubleToString(factura) + " de shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
 
-	cout << getpid() << " " << "INFO: Mesa " << mesa << ": pagando factura: $"<< factura << endl;
+	Logger::log(mozoLogId, "Mesa " + Logger::intToString(mesa) + ": pagando factura: $" +  Logger::doubleToString(factura), INFO);
 
-	cout << getpid() << " " << "DEBUG: Mozo esperando semCajaB" << endl;
+
+	Logger::log(mozoLogId, "Mozo esperando semCajaB", DEBUG);
+
 	semCajaB->p();
-	cout << getpid() << " " << "DEBUG: Mozo escribiendo 0 en shmFacturas[" << mesa << "]" << endl;
+	Logger::log(mozoLogId, "Mozo escribiendo 0 en shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
+
 	shmFacturas->at(mesa).escribir(0);
 
-	cout << getpid() << " " << "DEBUG: Mozo leyendo shmCaja" << endl;
+	Logger::log(mozoLogId, "Mozo leyendo shmCaja" , DEBUG);
 
 	double cajaActual = shmCaja->leer();
+	Logger::log(mozoLogId, "Mozo leyo " + Logger::doubleToString(cajaActual) + " de shmCaja", DEBUG);
 
-	cout << getpid() << " " << "DEBUG: Mozo leyo " << cajaActual << " de shmCaja" << endl;
 
-	cout << getpid() << " " << "INFO: Mozo sumando $" << factura << " a la caja" << endl;
+	Logger::log(mozoLogId, "Mozo sumando $" + Logger::doubleToString(factura) + " a la caja", INFO);
 
 	double cajaActualizada = cajaActual + factura;
 
 	shmCaja->escribir(cajaActualizada);
 
-	cout << getpid() << " " << "INFO: Valor actual de caja: $" << cajaActualizada << endl;
+	Logger::log(mozoLogId, "Valor actual de caja: $" + Logger::doubleToString(cajaActualizada), INFO);
+
 
 	semCajaB->v();
 	semsFacturas->at(mesa).v();
 	semsMesaPago->at(mesa).v();
 
-	cout << getpid() << " " << "DEBUG: Mozo libero  semCajaB, semsFacturas[" << mesa << "] y semsMesaPago[" << mesa << "]" << endl;
+	Logger::log(mozoLogId, "Mozo libero semCajaB semsFacturas[" + Logger::intToString(mesa) + "] y semsMesasPago[" + Logger::intToString(mesa) + "]" , DEBUG);
 
 
 }
 
 void MozoProcess::run(){
-	cout << getpid() << " " << "DEBUG: Iniciando mozo"<< endl;
+	Logger::log(mozoLogId, "Iniciando mozo" , DEBUG);
+
 
 	//TODO Ver si hay mejor forma que while(true).
 	while(true){
 
-		cout << getpid() << " " << "INFO: Mozo esperando a recibir llamados"<< endl;
+		Logger::log(mozoLogId, "Mozo esperando a recibir llamados" , INFO);
 
-		cout << getpid() << " " << "DEBUG: Mozo esperando semLlamadosAMozos"<< endl;
+		Logger::log(mozoLogId, "Mozo esperando semLlamadosAMozos" , DEBUG);
 
 		semLlamadosAMozos->p();
 
-		cout << getpid() << " " << "DEBUG: Mozo obtuvo semLlamadosAMozos"<< endl;
+		Logger::log(mozoLogId, "Mozo obtuvo semLlamadosAMozos" , DEBUG);
 
 		int tamanioLlamado = leerTamanioLlamado();
 
-		cout << getpid() << " " << "DEBUG: Mozo leyo tamanio de pedido: " << tamanioLlamado << endl;
+		Logger::log(mozoLogId, "Mozo leyo tamanio de pedido: " + Logger::intToString(tamanioLlamado) , DEBUG);
 
-		cout << getpid() << " " << "INFO: Mozo recibio un llamado"<< endl;
+		Logger::log(mozoLogId, "Mozo recibio un llamado" , INFO);
 
 		string llamado = leerLlamado(tamanioLlamado);
 
 		int tipoLlamado = LlamadoAMozoSerializer::getTipoLlamado(llamado);
 
-		cout << getpid() << " " << "DEBUG: Mozo recibio tipo de llamado: " << tipoLlamado << endl;
+		Logger::log(mozoLogId, "Mozo recibio tipo de llamado: " + Logger::intToString(tipoLlamado) , DEBUG);
 
 		switch (tipoLlamado) {
 			case LlamadoAMozoSerializer::PEDIDO: {
-
-				cout << getpid() << " " << "INFO: Mozo recibio un pedido de una mesa" << endl;
+				Logger::log(mozoLogId, "Mozo recibio un pedido de una mesa" , INFO);
 
 				Pedido pedido = LlamadoAMozoSerializer::deserializarPedido(llamado);
 				procesarPedido(pedido);
@@ -188,7 +195,7 @@ void MozoProcess::run(){
 			}
 			case LlamadoAMozoSerializer::COMIDA: {
 
-				cout << getpid() << " " << "INFO: Mozo recibio comida para llevar a una mesa" << endl;
+				Logger::log(mozoLogId, "Mozo recibio comida para llevar a una mesa" , INFO);
 
 				Comida comida = LlamadoAMozoSerializer::deserializarComida(llamado);
 				procesarComida(comida);
@@ -196,7 +203,8 @@ void MozoProcess::run(){
 			}
 			case LlamadoAMozoSerializer::PEDIDO_CUENTA: {
 
-				cout << getpid() << " " << "INFO: Mozo recibio un pedido de cuenta" << endl;
+				Logger::log(mozoLogId, "Mozo recibio un pedido de cuenta" , INFO);
+
 
 				PedidoCuenta pedidoCuenta = LlamadoAMozoSerializer::deserializarPedidoCuenta(llamado);
 				procesarPedidoCuenta(pedidoCuenta);
