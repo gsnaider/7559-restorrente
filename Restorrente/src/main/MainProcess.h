@@ -25,7 +25,7 @@ namespace std {
 
 const int MAX_PERSONAS_POR_GRUPO = 5;
 const string mainLogId = "Main";
-const string mozoLogId = "Mozo";
+
 
 /*
 // PARA CORRER DESDE ECLIPSE

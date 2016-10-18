@@ -22,6 +22,8 @@ class Pipe;
 
 namespace std {
 
+const string mozoLogId = "Mozo";
+
 class MozoProcess {
 private:
 

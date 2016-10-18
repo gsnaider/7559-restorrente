@@ -38,9 +38,9 @@ Logger::Logger()
 {
     log_path = "../restorrente.log";
     mode = INFO; //Por default se esta creando en INFO
-    mode_symbols[0] = "D.\t";
-    mode_symbols[1] = "E.\t";
-    mode_symbols[2] = "I.\t";
+    mode_symbols[0] = "DEBUG.\t";
+    mode_symbols[1] = "ERROR.\t";
+    mode_symbols[2] = "INFO.\t";
 
     log_timestamp();
 }
