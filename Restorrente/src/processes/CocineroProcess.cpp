@@ -92,7 +92,7 @@ void CocineroProcess::facturar(int mesa, Plato plato){
 	Logger::log(cocineroLogId, "Cocinero leyendo shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
 
 	double facturaActual = shmFacturas->at(mesa).leer();
-	Logger::log(cocineroLogId, "Cocinero leyo " + Logger::doubleToString(mesa) + " de shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
+	Logger::log(cocineroLogId, "Cocinero leyo " + Logger::doubleToString(facturaActual) + " de shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
 
 	Logger::log(cocineroLogId, "Cocinero sumando $" + Logger::doubleToString(precioPlato) + " a cuenta de mesa " + Logger::intToString(mesa), DEBUG);
 	double facturaActualizada = facturaActual + precioPlato;
