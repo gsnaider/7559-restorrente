@@ -18,6 +18,9 @@
 
 namespace std {
 
+const string cocineroLogId = "Cocin";
+
+
 class CocineroProcess {
 
 private:

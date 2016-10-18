@@ -44,7 +44,6 @@ MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, i
 }
 
 void MainProcess::iniciarProcesoCocinero(){
-	cout << "DEBUG: Iniciando cocinero"<< endl;
 	Logger::log(mainLogId, "Iniciando cocinero", DEBUG);
 	pid_t idCocinero = fork();
 	if (idCocinero == 0){
@@ -59,7 +58,6 @@ void MainProcess::iniciarProcesoCocinero(){
 
 void MainProcess::iniciarProcesosMozo(){
 	for (int i = 0; i < cantMozos; i++){
-		cout << "DEBUG: Iniciando mozo " << i << endl;
 		Logger::log(mainLogId, "Iniciando mozo "+ Logger::intToString(i), DEBUG);
 
 
@@ -79,7 +77,6 @@ void MainProcess::iniciarProcesosMozo(){
 
 void MainProcess::iniciarProcesosRecepcionista(){
 	for (int i = 0; i < cantRecepcionistas; i++){
-		cout << "DEBUG: Iniciando recepcionista " << i << endl;
 		Logger::log(mainLogId, "Iniciando recepcionista "+ Logger::intToString(i), DEBUG);
 		pid_t idRecepcionista = fork();
 
@@ -127,7 +124,7 @@ void MainProcess::inicializarMemoriasCompartidas(){
 void MainProcess::crearMemoriasCompartidas(){
 
 	cout << getpid() << " " << "DEBUG: Main: Comenzando inicializacion de memorias compartidas." << endl;
-
+	Logger::log(mainLogId, "Comenzando inicializacion de memorias compartidas ", DEBUG);
 	shmPersonasLiving.crear(SHM_PERSONAS_LIVING, 0);
 	shmPersonasLiving.escribir(0);
 	semPersonasLivingB.v();
@@ -148,7 +145,7 @@ void MainProcess::crearMemoriasCompartidas(){
 
 	}
 
-	cout << getpid() << " " << "DEBUG: Main: Fin de inicializacion de memorias compartidas." << endl;
+	Logger::log(mainLogId, "Fin de inicializacion de memorias compartidas ", DEBUG);
 }
 
 void MainProcess::inicializarPipesFifos(){
@@ -181,7 +178,6 @@ void MainProcess::finalizarProcesosRestaurant(){
 void MainProcess::inicializarComensalesComensales(){
 	for (int i = 0; i < cantComensales; i++){
 
-		cout << "DEBUG: Iniciando comensal " << i << endl;
 		Logger::log(mainLogId, "Iniciando comensal "+ Logger::intToString(i), DEBUG);
 		pid_t idComensal = fork();
 
@@ -212,7 +208,6 @@ void MainProcess::run(){
 	// Estoy asumiendo que los unicos que pueden terminar "por su cuenta" son los comensales cuando se van.
 	for (int i = 0; i < cantComensales; i++){
 		pid_t idHijo = wait(NULL);
-		cout << "DEBUG: Termino proceso hijo: " << idHijo << endl;
 		Logger::log(mainLogId, "Termino proceso hijo "+ Logger::intToString(idHijo), DEBUG);
 	}
 

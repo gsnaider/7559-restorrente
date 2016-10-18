@@ -19,6 +19,9 @@
 
 namespace std {
 
+const string comensalLogId = "Comens";
+
+
 const double PROBABILIDAD_IRSE = 0.25;
 const int TIEMPO_COMER = 30;
 

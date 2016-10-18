@@ -61,25 +61,33 @@ void GrupoComensalesProcess::inicializarMemoriasCompartidas(){
 int GrupoComensalesProcess::obtenerNumeroMesa(){
 	int mesa = -1;
 
-	cout << getpid() << " " << "INFO: Grupo de comensales buscando mesa libre. " <<  endl;
 
+	Logger::log(comensalLogId, "Grupo de comensales buscando mesa libre. ", INFO);
 	for (unsigned int i = 0; i < shmMesasLibres->size(); i++){
 
-		cout << getpid() << " " << "DEBUG: Grupo de comensales esperando semsMesasLibres: " << i <<  endl;
+		Logger::log(comensalLogId, "Grupo de comensales esperando semsMesasLibre: " + Logger::intToString(i), DEBUG);
+
 		semsMesasLibres->at(i).p();
-		cout << getpid() << " " << "DEBUG: Grupo de comensales obtuvo semsMesasLibres: " << i <<  endl;
-		cout << getpid() << " " << "DEBUG: shmMesasLibres size: " << shmMesasLibres->size() <<  endl;
+		Logger::log(comensalLogId, "Grupo de comensales obtuvo semsMesasLibre: " + Logger::intToString(i), DEBUG);
+
+		Logger::log(comensalLogId, "shmMesasLibre size: " + Logger::intToString(shmMesasLibres->size()), DEBUG);
+
 		bool mesaLibre = shmMesasLibres->at(i).leer();
-		cout << getpid() << " " << "DEBUG: Grupo de comensales leyo de shmMesasLibres: " << mesaLibre <<  endl;
+		//cout << getpid() << " " << "DEBUG: Grupo de comensales leyo de shmMesasLibres: " << mesaLibre <<  endl;
+		//anda bien sumar string + bool? Calculo que si
+		Logger::log(comensalLogId, "Grupo de comensales leyo de shmMesasLibres: " + mesaLibre, DEBUG);
+
 		if (mesaLibre){
 			mesa = i;
-			cout << getpid() << " " << "INFO: Mesa libre encontrada. Nro mesa: " << mesa <<  endl;
+			Logger::log(comensalLogId, "Mesa libre encontrara. Nro mesa: " + Logger::intToString(mesa), INFO);
 
-			cout << getpid() << " " << "INFO: Ocupando mesa nro: " << mesa <<  endl;
+			Logger::log(comensalLogId, "Ocupando mesa nro: " + Logger::intToString(mesa), INFO);
+
 			shmMesasLibres->at(i).escribir(false);
 
 		}
-		cout << getpid() << " " << "DEBUG: Grupo de comensales liberando semsMesasLibres: " << i <<  endl;
+		Logger::log(comensalLogId, "Grupo de comensales liberando semsMesasLibre: " + Logger::intToString(i), DEBUG);
+
 		semsMesasLibres->at(i).v();
 
 		if (mesaLibre){
@@ -88,7 +96,8 @@ int GrupoComensalesProcess::obtenerNumeroMesa(){
 	}
 
 	if (mesa < 0){
-		cout << getpid() << " " << "ERROR: No se encontro la mesa libre" <<  endl;
+		Logger::log(comensalLogId, "No se encontro la mesa libre " , ERROR);
+
 	}
 	return mesa;
 
@@ -100,7 +109,8 @@ Pedido GrupoComensalesProcess::generarPedido() {
 
 	for (int i = 0; i < cantPersonas; i++){
 		Plato plato = menu.getPlatoRandom();
-		cout << getpid() << " " << "INFO: Grupo de comensales elige " << plato.getNombre() << endl;
+		Logger::log(comensalLogId, "Grupo de comensales elige " + plato.getNombre(), INFO);
+
 		pedido.agregarPlato(plato);
 	}
 
@@ -111,36 +121,42 @@ Pedido GrupoComensalesProcess::generarPedido() {
 
 void GrupoComensalesProcess::llegar(){
 	Logger::log(comensalLogId, "Llega grupo de comensales de "+ Logger::intToString(cantPersonas) + " personas", INFO);
-	cout << getpid() << " " << "INFO: Llega grupo de comensales de " << cantPersonas << " personas" <<  endl;
+
 	semComensalesEnPuerta->v();
-	cout << getpid() << " " << "INFO: Grupo de comensales esperando recepcionista libre" << endl;
+	Logger::log(comensalLogId, "Grupo de comensales esperando recepcionista libre ", INFO);
+
 	semRecepcionistasLibres->p();
-	cout << getpid() << " " << "INFO: Grupo de comensales siendo atendido" << endl;
+	Logger::log(comensalLogId, "Grupo de comensales siendo atendido por recepcionista ", INFO);
+
 	sleep(TIEMPO_ANTENDIENDO);
 
-	cout << getpid() << " " << "DEBUG: Esperando semaforo personas living " << endl;
+	Logger::log(comensalLogId, "Esperando semaforo personas living ", DEBUG);
+
 	semPersonasLivingB->p();
-	cout << getpid() << " " << "DEBUG: Leyendo personas living " << endl;
+	Logger::log(comensalLogId, "Leyendo personas living ", DEBUG);
+
 	int personasLiving = shmPersonasLiving->leer();
-	cout << getpid() << " " << "DEBUG: Personas en living " << personasLiving << endl;
-	cout << getpid() << " " << "DEBUG: Incrementando personas living " << endl;
+	Logger::log(comensalLogId, "Personas living " + Logger::intToString(personasLiving), DEBUG);
+	Logger::log(comensalLogId, "Incrementando personas living ", DEBUG);
+
 	shmPersonasLiving->escribir(personasLiving + 1);
 	semPersonasLivingB->v();
 
 	semMesasLibres->p();
-	cout << getpid() << " " << "INFO: Grupo de comensales llendo a la mesa" << endl;
+	Logger::log(comensalLogId, "Grupo de comensales yendo a la mesa ", INFO);
 
 
-	cout << getpid() << " " << "DEBUG: Esperando semaforo personas living " << endl;
+	Logger::log(comensalLogId, "Esperando semaforo personas living ", DEBUG);
+
 	semPersonasLivingB->p();
-	cout << getpid() << " " << "DEBUG: Leyendo personas living " << endl;
+	Logger::log(comensalLogId, "Leyendo personas living ", DEBUG);
 	personasLiving = shmPersonasLiving->leer();
-	cout << getpid() << " " << "DEBUG: Personas en living " << personasLiving << endl;
-	cout << getpid() << " " << "DEBUG: Decrementando personas living " << endl;
+	Logger::log(comensalLogId, "Ppersonas en living: " + Logger::intToString(personasLiving), DEBUG);
+	Logger::log(comensalLogId, "Decrementando personas living ", DEBUG);
 	shmPersonasLiving->escribir(personasLiving - 1);
 	semPersonasLivingB->v();
 
-	cout << getpid() << " " << "DEBUG: Liberando memoria personas living " << endl;
+	Logger::log(comensalLogId, "Liberando memoria personas living ", DEBUG);
 
 	mesa = obtenerNumeroMesa();
 }
@@ -151,30 +167,31 @@ void GrupoComensalesProcess::comer(){
 	int i = 0;
 
 	while(seguirPidiendo){
-		cout << getpid() << " " << "INFO: Grupo de comensales eligiendo comida" << endl;
+		Logger::log(comensalLogId, "Grupo de comensales eligiendo comida", INFO);
 
 		Pedido pedido = generarPedido();
 		string pedidoStr = LlamadoAMozoSerializer::serializar(pedido);
+		Logger::log(comensalLogId, "Grupo de comensales pidiendo comida", INFO);
 
-		cout << getpid() << " " << "INFO: Grupo de comensales pidiendo comida." << endl;
-		cout << getpid() << " " << "DEBUG: Grupo de comensales escribiendo en pipeLlamadosAMozos: " << pedidoStr << endl;
+		Logger::log(comensalLogId, "Grupo de comensales escribiendo en pipeLlamadosAMozos: " + pedidoStr, DEBUG);
 
 		pipeLlamadosAMozos->escribir(static_cast<const void*>(pedidoStr.c_str()), pedidoStr.size());
 
-		cout << getpid() << " " << "INFO: Grupo de comensales esperando comida." << endl;
+		Logger::log(comensalLogId, "Grupo de comensales esperando comida", INFO);
 		semsLlegoComida->at(mesa).p();
-		cout << getpid() << " " << "INFO: Grupo de comensales: Llego comida a mesa nro " << mesa << endl;
+		Logger::log(comensalLogId, "Grupo de comensales: Llego comida a mesa nro " + Logger::intToString(mesa), INFO);
 
-		cout << getpid() << " " << "INFO: Grupo de comensales empezando a comer" << endl;
+		Logger::log(comensalLogId, "Grupo de comensales empezando a comer", INFO);
 
 		vector<Plato> platos = pedido.getPlatos();
 
 		for (unsigned int i = 0; i < platos.size(); i++){
-			cout << getpid() << " " << "INFO: Comiendo " << platos[i].getNombre() << endl;
+			Logger::log(comensalLogId, "Comiendo " + platos[i].getNombre(), INFO);
+
 		}
 		sleep(TIEMPO_COMER);
 
-		cout << getpid() << " " << "INFO: Grupo de comensales termino de comer." << endl;
+		Logger::log(comensalLogId, "Grupo de comensales termino de comer.", INFO);
 
 		// TODO Arreglar, no esta funcionando el random.
 		//seguirPidiendo = (RandomUtil::randomCeroUno() < PROBABILIDAD_IRSE);
@@ -188,16 +205,16 @@ void GrupoComensalesProcess::comer(){
 
 void GrupoComensalesProcess::pagar(){
 
-	cout << getpid() << " " << "INFO: Grupo de comensales pidiendo la cuenta." << endl;
+	Logger::log(comensalLogId, "Grupo de comensales pidiendo la cuenta.", INFO);
 
 	PedidoCuenta pedidoCuenta(mesa);
 	string pedidoCuentaStr = LlamadoAMozoSerializer::serializar(pedidoCuenta);
 
-	cout << getpid() << " " << "DEBUG: Grupo de comensales escribiendo en pipeLlamadosAMozos: " << pedidoCuentaStr << endl;
+	Logger::log(comensalLogId, "Grupo de comensales escribiendo en pipeLlamadosAMozos: " + pedidoCuentaStr, DEBUG);
 
 	pipeLlamadosAMozos->escribir(static_cast<const void*>(pedidoCuentaStr.c_str()), pedidoCuentaStr.size());
 
-	cout << getpid() << " " << "INFO: Grupo de comensales esperando para pagar." << endl;
+	Logger::log(comensalLogId, "Grupo de comensales esperando para pagar.", INFO);
 
 	semsMesaPago->at(mesa).p();
 
@@ -207,15 +224,16 @@ void GrupoComensalesProcess::irse(){
 
 
 	cout << getpid() << " " << "DEBUG: Grupo de comensales esperando semsMesasLibres " << mesa << endl;
+	Logger::log(comensalLogId, "Grupo de comensales esperando semsMesasLibres " + Logger::intToString(mesa), DEBUG);
 
 	semsMesasLibres->at(mesa).p();
 
-	cout << getpid() << " " << "INFO: Grupo de comensales liberando la mesa nro " << mesa << endl;
+	Logger::log(comensalLogId, "Grupo de comensales liberando la mesa nro " + Logger::intToString(mesa), INFO);
 
 	shmMesasLibres->at(mesa).escribir(true);
 	semsMesasLibres->at(mesa).v();
 
-	cout << getpid() << " " << "INFO: Grupo de comensales se va de la mesa" << endl;
+	Logger::log(comensalLogId, "Grupo de comensales se va de la mesa", INFO);
 
 	semMesasLibres->v();
 
@@ -223,7 +241,6 @@ void GrupoComensalesProcess::irse(){
 
 
 void GrupoComensalesProcess::run(){
-	cout << "DEBUG: Iniciando grupo de comensales con pid: " << getpid() << endl;
 	Logger::log(comensalLogId, "Iniciando grupo de comensales comensal", DEBUG);
 
 	llegar();

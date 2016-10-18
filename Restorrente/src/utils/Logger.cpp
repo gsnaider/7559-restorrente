@@ -26,6 +26,13 @@ std::string Logger::intToString ( int number )
    return ss.str();
 }
 
+std::string Logger::doubleToString ( double number )
+{
+   std::ostringstream ss;
+   ss << number;
+   return ss.str();
+}
+
 
 Logger::Logger()
 {

@@ -45,14 +45,13 @@ int CocineroProcess::leerTamanioPedido(){
 	char tamanioPedidoChar;
 	string tamanioPedidoStr;
 	bool finLectura = false;
-
-	cout << getpid() << " " << "DEBUG: Cocinero esperando para leer tamanio de pedido"<< endl;
+	Logger::log(cocineroLogId, "Cocinero esperando para leer tamanio de pedido", DEBUG);
 	do{
-		cout << getpid() << " " << "DEBUG: Cocinero esperando para leer pipePedidosACocinar"<< endl;
+		Logger::log(cocineroLogId, "Cocinero esperando para leer pipePedidosACocinar", DEBUG);
 
 		pipePedidosACocinar->leer(static_cast<void*>(&tamanioPedidoChar),sizeof(char));
 
-		cout << getpid() << " " << "DEBUG: Cocinero leyo " << tamanioPedidoChar << " de pipePedidosACocinar"<< endl;
+		Logger::log(cocineroLogId, "Cocinero leyo " + Logger::intToString(tamanioPedidoChar) + " de pipePedidosACocinar", DEBUG);
 
 		finLectura = (tamanioPedidoChar == LlamadoAMozoSerializer::SEPARADOR);
 		if (!finLectura){
@@ -69,14 +68,15 @@ string CocineroProcess::leerPedido(int tamanioPedido) {
 	char buffer[tamanioPedido];
 	string pedido;
 
-	cout << getpid() << " " << "DEBUG: Cocinero esperando para leer pipePedidosACocinar"<< endl;
+	Logger::log(cocineroLogId, "Cocinero esperando para leer pipePedidosACocinar", DEBUG);
 
 	pipePedidosACocinar->leer(static_cast<void*>(buffer),tamanioPedido);
 
-	cout << getpid() << " " << "DEBUG: Cocinero termino de leer pipePedidosACocinar"<< endl;
+	Logger::log(cocineroLogId, "Cocinero termino de leer pipePedidosACocinar", DEBUG);
 
 	pedido = buffer;
-	cout << getpid() << " " << "DEBUG: Cocinero leyo " << pedido << " de pipePedidosACocinar"<< endl;
+	Logger::log(cocineroLogId, "Cocinero leyo" + pedido + " de pipePedidoACocinar", DEBUG);
+
 
 	return pedido;
 }
@@ -84,42 +84,41 @@ string CocineroProcess::leerPedido(int tamanioPedido) {
 void CocineroProcess::facturar(int mesa, Plato plato){
 	double precioPlato = plato.getPrecio();
 
-	cout << getpid() << " " << "DEBUG: Cocinero esperando semsFacturas[" << mesa << "]" << endl;
+	Logger::log(cocineroLogId, "Cocinero esperando semsFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
+
 	semsFacturas->at(mesa).p();
-	cout << getpid() << " " << "DEBUG: Cocinero obtuvo semsFacturas[" << mesa << "]" << endl;
+	Logger::log(cocineroLogId, "Cocinero obtuvo semsFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
 
-	cout << getpid() << " " << "DEBUG: Cocinero leyendo shmFacturas[" << mesa << "]" << endl;
+	Logger::log(cocineroLogId, "Cocinero leyendo shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
+
 	double facturaActual = shmFacturas->at(mesa).leer();
-	cout << getpid() << " " << "DEBUG: Cocinero leyo " << facturaActual << " de shmFacturas[" << mesa << "]" << endl;
+	Logger::log(cocineroLogId, "Cocinero leyo " + Logger::doubleToString(mesa) + " de shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
 
-
-	cout << getpid() << " " << "INFO: Cocinero sumando $" << precioPlato << " a cuenta de mesa " << mesa << endl;
-
+	Logger::log(cocineroLogId, "Cocinero sumando $" + Logger::doubleToString(precioPlato) + " a cuenta de mesa " + Logger::intToString(mesa), DEBUG);
 	double facturaActualizada = facturaActual + precioPlato;
 
-	cout << getpid() << " " << "DEBUG: Cocinero escribiendo en shmFacturas[" << mesa << "]" << endl;
+	Logger::log(cocineroLogId, "Cocinero escribiendo shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
 
 	shmFacturas->at(mesa).escribir(facturaActualizada);
 
-	cout << getpid() << " " << "INFO: Factura actual de mesa " << mesa << ": $" << facturaActualizada << endl;
+	Logger::log(cocineroLogId, "Factura actual de mesa " + Logger::intToString(mesa) + ": $" + Logger::doubleToString(facturaActualizada), INFO);
 
-	cout << getpid() << " " << "DEBUG: Cocinero escribio en shmFacturas[" << mesa << "]" << endl;
+	Logger::log(cocineroLogId, "Cocinero escribio en shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
 
 	semsFacturas->at(mesa).v();
 }
 
 Comida CocineroProcess::cocinar(Pedido pedido) {
-	cout << getpid() << " " << "INFO: Cocinero recibio un pedido de mesa " << pedido.getMesa() << endl;
+	Logger::log(cocineroLogId, "Cocinero recibio un pedido de mesa " + Logger::intToString(pedido.getMesa()), INFO);
 
 	Comida comida(pedido.getMesa());
 
 	for (unsigned int i = 0; i < pedido.getPlatos().size(); i++){
-		cout << getpid() << " " << "INFO: Cocinero cocinando " << pedido.getPlatos().at(i).getNombre() << endl;
+		Logger::log(cocineroLogId, "Cocinero cocinando " + pedido.getPlatos().at(i).getNombre(), INFO);
 
 		sleep(TIEMPO_COCINA);
 
-		cout << getpid() << " " << "INFO: Cocinero termino de cocinar " << pedido.getPlatos().at(i).getNombre() << endl;
-
+		Logger::log(cocineroLogId, "Cocinero termino de cocinar " + pedido.getPlatos().at(i).getNombre(), INFO);
 		comida.agregarPlato(pedido.getPlatos().at(i));
 
 		facturar(pedido.getMesa(),pedido.getPlatos().at(i));
@@ -127,25 +126,25 @@ Comida CocineroProcess::cocinar(Pedido pedido) {
 	}
 
 
-	cout << getpid() << " " << "INFO: Cocinero termino de cocinar pedido de mesa " << pedido.getMesa() << endl;
 
+	Logger::log(cocineroLogId, "Cocinero termino de cocinar pedido de mesa " + Logger::intToString(pedido.getMesa()), INFO);
 	return comida;
 }
 
 
 void CocineroProcess::run(){
-	cout << getpid() << " " << "DEBUG: Iniciando cocinero"<< endl;
+	Logger::log(cocineroLogId, "Iniciando cocinero " , DEBUG);
 
 	//TODO Ver si hay mejor forma que while(true).
 	while(true){
 
-		cout << getpid() << " " << "INFO: Cocinero esperando a recibir pedidos"<< endl;
+		Logger::log(cocineroLogId, "Cocinero esperando a recibir pedidos " , INFO);
 
 		int tamanioPedido = leerTamanioPedido();
 
-		cout << getpid() << " " << "DEBUG: Cocinero leyo tamanio de pedido: " << tamanioPedido << endl;
+		Logger::log(cocineroLogId, "Cocinero leyo tamanio de pedido: " + Logger::intToString(tamanioPedido), DEBUG);
 
-		cout << getpid() << " " << "INFO: Cocinero recibio un pedido"<< endl;
+		Logger::log(cocineroLogId, "Cocinero recibio un pedido " , INFO);
 
 		string pedidoStr = leerPedido(tamanioPedido);
 		Pedido pedido = LlamadoAMozoSerializer::deserializarPedido(pedidoStr);
@@ -155,11 +154,11 @@ void CocineroProcess::run(){
 		string comidaStr = LlamadoAMozoSerializer::serializar(comida);
 
 
-		cout << getpid() << " " << "DEBUG: Cocinero escribiendo en pipeLlamadosAMozos: " << comidaStr << endl;
+		Logger::log(cocineroLogId, "Cocinero escribiendo en pipeLlamadosAMozos: " + comidaStr, DEBUG);
 
 		pipeLlamadosAMozos->escribir(static_cast<const void*>(comidaStr.c_str()), comidaStr.size());
 
-		cout << getpid() << " " << "INFO: Cocinero: ya esta lista la comida para llevar a la mesa " << comida.getMesa() << endl;
+		Logger::log(cocineroLogId, "Cocinero: ya esta lista la comida para llevar a la mesa " + Logger::intToString(comida.getMesa()), INFO);
 
 	}
 }

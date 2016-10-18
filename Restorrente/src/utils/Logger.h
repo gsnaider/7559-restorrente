@@ -23,6 +23,7 @@ class Logger
         static void logErrno(std::string name);
         static void setMode(LOG_MODE mode);
         static std::string intToString ( int number );
+        static std::string doubleToString ( double number );
 
 
     private:
