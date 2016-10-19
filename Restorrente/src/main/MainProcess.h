@@ -123,20 +123,26 @@ private:
 	void inicializarProcesosComensales();
 
 	void finalizarProcesosRestaurant();
+	int finalizarComensales();
 
 	void eliminarIPCs();
 	void eliminarSemaforos();
 	void eliminarMemoriasCompartidas();
 	void eliminarPipesFifos();
 
-	void handleCorteLuz(int comensalesTerminados);
+	int handleCorteLuz();
 	void acumularPerdidas();
 
 
 
 public:
 	MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, int cantComensales, Menu menu);
-	void run();
+
+	/**
+	 * Devuelve la cantidad de comensales que pasaron por el restaurant.
+	 */
+	int run();
+
 	virtual ~MainProcess();
 };
 

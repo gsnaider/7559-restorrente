@@ -48,6 +48,7 @@ GrupoComensalesProcess::GrupoComensalesProcess(int cantPersonas, Semaforo* semRe
 	this->menu = menu;
 
 	inicializarMemoriasCompartidas();
+	inicializarHandler();
 }
 
 void GrupoComensalesProcess::inicializarMemoriasCompartidas(){
@@ -250,6 +251,7 @@ void GrupoComensalesProcess::run(){
 }
 
 void GrupoComensalesProcess::limpiarRecursos(){
+	Logger::log(comensalLogId, "Limpiando recursos", DEBUG);
 	liberarMemoriasCompartidas();
 }
 

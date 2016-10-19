@@ -51,15 +51,17 @@ private:
 	vector<Semaforo>* semsMesasLibres;
 	vector<MemoriaCompartida<bool>>* shmMesasLibres;
 
-	SIGINT_Handler* sigintHandler;
+	SIGINT_Handler sigintHandler;
+
+	void inicializarHandler();
 
 
 public:
 	AdminComensalesProcess(int cantComensales, Menu menu, Semaforo* semRecepcionistasLibres, Semaforo* semComensalesEnPuerta,
 			Semaforo* semPersonasLivingB, MemoriaCompartida<int>* shmPersonasLiving, Semaforo* semMesasLibres,
 			vector<Semaforo>* semsMesasLibres, vector<MemoriaCompartida<bool>>* shmMesasLibres,
-			Pipe* pipeLlamadosAMozos, vector<Semaforo>* semsLlegoComida, vector<Semaforo>* semsMesaPago, SIGINT_Handler* sigintHandler);
-	int iniciarComensales();
+			Pipe* pipeLlamadosAMozos, vector<Semaforo>* semsLlegoComida, vector<Semaforo>* semsMesaPago);
+	int run();
 	virtual ~AdminComensalesProcess();
 };
 

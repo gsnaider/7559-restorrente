@@ -9,17 +9,18 @@
 
 #include <sys/wait.h>
 #include <unistd.h>
+#include <csignal>
 #include <cstdlib>
 #include <string>
 
-#include "../main/MainProcess.h"
+#include "../utils/ipc/signal/SignalHandler.h"
 
 namespace std {
 
 AdminComensalesProcess::AdminComensalesProcess(int cantComensales, Menu menu, Semaforo* semRecepcionistasLibres, Semaforo* semComensalesEnPuerta,
 			Semaforo* semPersonasLivingB, MemoriaCompartida<int>* shmPersonasLiving, Semaforo* semMesasLibres,
 			vector<Semaforo>* semsMesasLibres, vector<MemoriaCompartida<bool>>* shmMesasLibres,
-			Pipe* pipeLlamadosAMozos, vector<Semaforo>* semsLlegoComida, vector<Semaforo>* semsMesaPago, SIGINT_Handler* sigintHandler){
+			Pipe* pipeLlamadosAMozos, vector<Semaforo>* semsLlegoComida, vector<Semaforo>* semsMesaPago){
 
 	this->cantComensales = cantComensales;
 	this->semComensalesEnPuerta = semComensalesEnPuerta;
@@ -38,15 +39,22 @@ AdminComensalesProcess::AdminComensalesProcess(int cantComensales, Menu menu, Se
 	this->semsMesasLibres = semsMesasLibres;
 	this->shmMesasLibres = shmMesasLibres;
 
-	this->sigintHandler = sigintHandler;
 	this->menu = menu;
+
+	inicializarHandler();
+
 }
 
-int AdminComensalesProcess::iniciarComensales(){
+void AdminComensalesProcess::inicializarHandler(){
+	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigintHandler);
+}
+
+int AdminComensalesProcess::run(){
 
 	Logger::log(adminComensalesLogId, "Comenzando inicializacion de comensales", DEBUG);
 	Logger::log(adminComensalesLogId, "Cantidad de comensales a inicializar: " + Logger::intToString(cantComensales) , DEBUG);
 
+	vector<pid_t> idsComensales;
 
 	int comensalesCreados = 0;
 
@@ -54,7 +62,7 @@ int AdminComensalesProcess::iniciarComensales(){
 	bool corteLuz = false;
 	while (i < cantComensales && !corteLuz){
 
-		sleep(RandomUtil::randomInt(10));
+		sleep(10);
 
 		pid_t idComensal = fork();
 
@@ -68,23 +76,51 @@ int AdminComensalesProcess::iniciarComensales(){
 			grupoComensalesProcess.run();
 			exit(0);
 		} else {
+			idsComensales.push_back(idComensal);
 			comensalesCreados++;
 		}
 
-		corteLuz = (sigintHandler->getGracefulQuit() == 1);
+		corteLuz = (sigintHandler.getGracefulQuit() == 1);
 		if (corteLuz){
 			Logger::log(adminComensalesLogId, "Corte de luz: abortando creacion de comensales. Comensales creados hasta el momento: " + Logger::intToString(comensalesCreados) , DEBUG);
+			Logger::log(adminComensalesLogId, "Corte de luz: Se van los comensales que estaban en el restaurant" , INFO);
 		}
 		i++;
 	}
 
-	int comensalesTerminados = 0;
+	if(corteLuz){
 
-	while (comensalesTerminados < cantComensales){
+		Logger::log(adminComensalesLogId, "Reenviando senial a los comensales" , DEBUG);
+		for (unsigned int i = 0; i < idsComensales.size(); i++){
+			kill(idsComensales[i], SIGINT);
+		}
 
+	} else {
+
+		Logger::log(adminComensalesLogId, "Todos los comensales fueron inicializados: "  + Logger::intToString(comensalesCreados) , DEBUG);
+		Logger::log(adminComensalesLogId, "Esperando finalizacion de comensales" , DEBUG);
+
+
+		int comensalesTerminados = 0;
+
+		while ((comensalesTerminados < comensalesCreados) && (!corteLuz)){
 			pid_t id = wait(NULL);
-			Logger::log(adminComensalesLogId, "Termino el comensal "+ Logger::intToString(id), DEBUG);
-			comensalesTerminados++;
+			corteLuz = (sigintHandler.getGracefulQuit() == 1);
+			if (corteLuz){
+				Logger::log(adminComensalesLogId, "Corte de luz: abortando comensales. " , DEBUG);
+				Logger::log(adminComensalesLogId, "Corte de luz: Se van los comensales que estaban en el restaurant" , INFO);
+			}else{
+				Logger::log(adminComensalesLogId, "Termino el comensal "+ Logger::intToString(id), DEBUG);
+				comensalesTerminados++;
+			}
+		}
+
+		if(corteLuz){
+			Logger::log(adminComensalesLogId, "Reenviando senial a los comensales" , DEBUG);
+			for (int i = 0; i < idsComensales.size(); i++){
+				kill(idsComensales[i], SIGINT);
+			}
+		}
 	}
 
 	return comensalesCreados;

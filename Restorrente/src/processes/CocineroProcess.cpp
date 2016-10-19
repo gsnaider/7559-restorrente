@@ -30,6 +30,7 @@ CocineroProcess::CocineroProcess(Pipe* pipePedidosACocinar,
 	this->pipeLlamadosAMozos = pipeLlamadosAMozos;
 
 	inicializarMemoriasCompartidas();
+	inicializarHandler();
 
 }
 
@@ -94,7 +95,7 @@ void CocineroProcess::facturar(int mesa, Plato plato){
 	double facturaActual = shmFacturas->at(mesa).leer();
 	Logger::log(cocineroLogId, "Cocinero leyo " + Logger::doubleToString(facturaActual) + " de shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
 
-	Logger::log(cocineroLogId, "Cocinero sumando $" + Logger::doubleToString(precioPlato) + " a cuenta de mesa " + Logger::intToString(mesa), DEBUG);
+	Logger::log(cocineroLogId, "Cocinero sumando $" + Logger::doubleToString(precioPlato) + " a cuenta de mesa " + Logger::intToString(mesa), INFO);
 	double facturaActualizada = facturaActual + precioPlato;
 
 	Logger::log(cocineroLogId, "Cocinero escribiendo shmFacturas[" + Logger::intToString(mesa) + "]", DEBUG);
@@ -164,6 +165,7 @@ void CocineroProcess::run(){
 }
 
 void CocineroProcess::limpiarRecursos(){
+	Logger::log(cocineroLogId, "Limpiando recursos", DEBUG);
 	liberarMemoriasCompartidas();
 }
 

@@ -30,6 +30,7 @@ MozoProcess::MozoProcess(Pipe* pipeLlamadosAMozos, Pipe* pipePedidosACocinar, Se
 	this->semsMesaPago = semsMesaPago;
 
 	inicializarMemoriasCompartidas();
+	inicializarHandler();
 
 }
 
@@ -84,6 +85,7 @@ void MozoProcess::procesarPedido(Pedido pedido) {
 
 	for (unsigned int i = 0; i < pedido.getPlatos().size(); i++){
 		Logger::log(mozoLogId, "Mozo tomando pedido de " + pedido.getPlatos().at(i).getNombre(), INFO);
+		sleep(TIEMPO_TOMAR_PEDIDO);
 	}
 
 	string pedidoStr = LlamadoAMozoSerializer::serializar(pedido);
@@ -218,6 +220,7 @@ void MozoProcess::run(){
 }
 
 void MozoProcess::limpiarRecursos(){
+	Logger::log(mozoLogId, "Limpiando recursos", DEBUG);
 	liberarMemoriasCompartidas();
 }
 

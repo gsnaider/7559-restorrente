@@ -26,6 +26,8 @@ const string mozoLogId = "Mozo";
 class MozoProcess : public Process{
 private:
 
+	const int TIEMPO_TOMAR_PEDIDO = 2;
+
 	Semaforo* semLlamadosAMozos;
 	Pipe* pipeLlamadosAMozos;
 	Pipe* pipePedidosACocinar;

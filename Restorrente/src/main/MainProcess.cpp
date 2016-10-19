@@ -31,7 +31,6 @@ MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, i
 
 		{
 
-
 	this->cantRecepcionistas = cantRecepcionistas;
 	this->cantMozos = cantMozos;
 	this->cantMesas = cantMesas;
@@ -159,18 +158,37 @@ void MainProcess::inicializarIPCs(){
 }
 
 void MainProcess::finalizarProcesosRestaurant(){
+	Logger::log(mainLogId, "Finalizando procesos del restaurant", DEBUG);
 
 	for (unsigned int i = 0; i < idsRecepcionistas.size(); i++){
-		kill(idsRecepcionistas[i], 9);
+		Logger::log(mainLogId, "Finalizando recepcionista " + Logger::intToString(idsRecepcionistas[i]), DEBUG);
+		kill(idsRecepcionistas[i], SIGINT);
+		waitpid(idsRecepcionistas[i],NULL,0);
 	}
 
 	for (unsigned int i = 0; i < idsMozos.size(); i++){
-		kill(idsMozos[i], 9);
+		Logger::log(mainLogId, "Finalizando mozo " + Logger::intToString(idsMozos[i]), DEBUG);
+		kill(idsMozos[i], SIGINT);
+		waitpid(idsMozos[i],NULL,0);
 	}
 
-	kill(idCocinero, 9);
+	Logger::log(mainLogId, "Finalizando cocinero" + Logger::intToString(idCocinero), DEBUG);
+	kill(idCocinero, SIGINT);
+	waitpid(idCocinero,NULL,0);
 
+}
 
+int MainProcess::finalizarComensales(){
+	Logger::log(mainLogId, "Finalizando procesos de comensales", DEBUG);
+	kill(idAdminComensales, SIGINT);
+	int cantComensalesFinalizados;
+	waitpid(idAdminComensales, &cantComensalesFinalizados, 0);
+
+	//TODO Ver como hacer para leer bien el valor de cantComensalesFinalizados del retorno del waitpid
+	cantComensalesFinalizados = cantComensales;
+
+	Logger::log(mainLogId, "Cantidad de comensales finalizados: " + Logger::intToString(cantComensalesFinalizados), DEBUG);
+	return cantComensalesFinalizados;
 }
 
 void MainProcess::inicializarProcesosComensales(){
@@ -180,9 +198,9 @@ void MainProcess::inicializarProcesosComensales(){
 		AdminComensalesProcess adminComensales(cantComensales, menu, &semRecepcionistasLibres, &semComensalesEnPuerta,
 				&semPersonasLivingB, &shmPersonasLiving, &semMesasLibres,
 				&semsMesasLibres, &shmMesasLibres,
-				&pipeLlamadosAMozos, &semsLlegoComida, &semsMesaPago, &sigintHandler);
-		int comensalesCreados = adminComensales.iniciarComensales();
-		exit(comensalesCreados);
+				&pipeLlamadosAMozos, &semsLlegoComida, &semsMesaPago);
+		int comensalesFinalizados = adminComensales.run();
+		exit(comensalesFinalizados);
 	} else {
 		this->idAdminComensales = idAdminComensales;
 	}
@@ -194,6 +212,7 @@ void MainProcess::inicializarSigintHandler(){
 
 void MainProcess::acumularPerdidas(){
 
+	Logger::log(mainLogId, "Acumulando perdidas por corte de luz", INFO);
 	for (int mesa = 0; mesa < cantMesas; mesa++){
 		semsFacturas.at(mesa).p();
 		perdidas += shmFacturas.at(mesa).leer();
@@ -201,46 +220,44 @@ void MainProcess::acumularPerdidas(){
 	}
 }
 
-void MainProcess::handleCorteLuz(int comensalesTerminados){
+
+int MainProcess::handleCorteLuz(){
 	Logger::log(mainLogId, "CORTE DE LUZ", INFO);
 	acumularPerdidas();
+	int comensalesFinalizados = finalizarComensales();
+	finalizarProcesosRestaurant();
 	eliminarIPCs();
-	iniciarSimulacion();
-	//Volver a inicializar estructuras datos.
+
+	Logger::log(mainLogId, "ESPERANDO QUE VUELVA LA LUZ", INFO);
+	sleep(30); //Durmiendo hasta q vuevle la luz
+
+	return comensalesFinalizados;
 }
 
 
 void MainProcess::iniciarSimulacion(){
-	inicializarSigintHandler(); //Todos los procesos manejan el sigint (corte de luz).
 	inicializarProcesosRestaurant();
 	inicializarProcesosComensales();
 	crearMemoriasCompartidas();
+	inicializarSigintHandler();
 }
 
-void MainProcess::run(){
+int MainProcess::run(){
 	iniciarSimulacion();
 	Logger::log(mainLogId, "Simulacion iniciada", DEBUG);
-	int comensalesTerminados = 0;
 
-	bool corteLuz = false;
+	int comensalesFinalizados = 0;
+	waitpid(idAdminComensales, &comensalesFinalizados, 0);
 
-	/*
-	while (comensalesTerminados < cantComensales){
+	//TODO Ver como hacer para leer bien el valor de comensalesTerminados del retorno con el waitpid
 
-		pid_t id = wait(NULL); //solo los comensales finalizan de forma autonoma.
-		corteLuz = (sigintHandler.getGracefulQuit() == 1);
-		if (corteLuz){
-			handleCorteLuz(comensalesTerminados);
-
-		} else {
-			//wait finalizo porque termino un proceso hijo, y no por un corte de luz.
-			comensalesTerminados++;
-			Logger::log(mainLogId, "Termino el proceso "+ Logger::intToString(id), DEBUG);
-		}
+	bool corteLuz = (sigintHandler.getGracefulQuit() == 1);
+	if (corteLuz){
+		comensalesFinalizados = handleCorteLuz();
+	}else {
+		finalizarProcesosRestaurant();
 	}
-*/
-	waitpid(idAdminComensales, NULL, 0);
-	finalizarProcesosRestaurant();
+	return comensalesFinalizados;
 
 }
 
@@ -290,6 +307,7 @@ void MainProcess::eliminarPipesFifos(){
 
 
 void MainProcess::eliminarIPCs(){
+	Logger::log(mainLogId, "Eliminando IPCs", DEBUG);
 	eliminarPipesFifos();
 	eliminarMemoriasCompartidas();
 	eliminarSemaforos();

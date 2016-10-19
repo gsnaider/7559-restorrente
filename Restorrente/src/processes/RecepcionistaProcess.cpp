@@ -15,6 +15,8 @@ namespace std {
 RecepcionistaProcess::RecepcionistaProcess(Semaforo* semRecepcionistasLibres, Semaforo* semComensalesEnPuerta) {
 	this->semRecepcionistasLibres = semRecepcionistasLibres;
 	this->semComensalesEnPuerta = semComensalesEnPuerta;
+
+	inicializarHandler();
 }
 
 void RecepcionistaProcess::run(){
@@ -37,7 +39,7 @@ void RecepcionistaProcess::run(){
 }
 
 void RecepcionistaProcess::limpiarRecursos(){
-	//No utiliza recursos que requieran limpieza.
+	Logger::log(recepcionistaLogId, "Limpiando recursos", DEBUG);
 }
 
 RecepcionistaProcess::~RecepcionistaProcess() {

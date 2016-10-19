@@ -44,10 +44,13 @@ int main() {
 	Logger::log(mainLogId, "Cantidad de Comensales: " + Logger::intToString(cantComensales), INFO);
 	Logger::log(mainLogId, "nivelDeLog: " + Logger::intToString(nivelDeLog), INFO);
 
-	MainProcess mainProcess(cantRecepcionistas, cantMozos, cantMesas, cantComensales, menu);
+	int cantComensalesFinalizadosAcum = 0;
 
-	mainProcess.run();
-
+	do {
+		MainProcess mainProcess(cantRecepcionistas, cantMozos, cantMesas, cantComensales, menu);
+		int cantComensalesFinalizados = mainProcess.run();
+		cantComensalesFinalizadosAcum += cantComensalesFinalizados;
+	} while(cantComensalesFinalizadosAcum < cantComensales);
 
 	return 0;
 }

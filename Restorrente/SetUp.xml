@@ -1,7 +1,7 @@
 <SetUp>
-	<cantComensales>1</cantComensales>
-	<cantMozos>5</cantMozos>
-	<cantRecepcionistas>2</cantRecepcionistas>
+	<cantComensales>3</cantComensales>
+	<cantMozos>2</cantMozos>
+	<cantRecepcionistas>3</cantRecepcionistas>
 	<cantMesas>2</cantMesas>
 	<nivelDeLog>0</nivelDeLog>
 	<Menu>

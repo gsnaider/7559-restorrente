@@ -8,16 +8,27 @@
 #ifndef PROCESSES_PROCESS_H_
 #define PROCESSES_PROCESS_H_
 
-namespace std {
+#include <string>
+#include "../utils/logger/Logger.h"
+
+class SIGINT_ProcessHandler ;
+
+namespace std{
+
+const string processLogId = "Process";
 
 class Process {
+protected:
+	void inicializarHandler();
+	SIGINT_ProcessHandler* handler;
+
 public:
 	Process();
 	virtual void run() = 0;
 	virtual void limpiarRecursos() = 0;
+	void finalizar();
 	virtual ~Process();
 };
 
-} /* namespace std */
-
+}
 #endif /* PROCESSES_PROCESS_H_ */
