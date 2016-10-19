@@ -119,11 +119,3 @@ void Logger::log(std::string name, std::string comment, LOG_MODE mode){
     l->_log(name, comment, mode);
 }
 
-void Logger::logErrno(std::string name){
-    char buf[256];
-    char const* str = strerror_r(errno, buf, 256);
-    std::string msg(str);
-
-    Logger::log(name, msg, ERROR);
-}
-
