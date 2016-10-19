@@ -1,9 +1,9 @@
 <SetUp>
 	<cantComensales>3</cantComensales>
-	<cantMozos>2</cantMozos>
-	<cantRecepcionistas>3</cantRecepcionistas>
-	<cantMesas>2</cantMesas>
-	<nivelDeLog>0</nivelDeLog>
+	<cantMozos>1</cantMozos>
+	<cantRecepcionistas>1</cantRecepcionistas>
+	<cantMesas>1</cantMesas>
+	<nivelDeLog>1</nivelDeLog>
 	<Menu>
 		<Plato>
 			<precio>140.23</precio>

@@ -256,7 +256,9 @@ int MainProcess::run(){
 		comensalesFinalizados = handleCorteLuz();
 	}else {
 		finalizarProcesosRestaurant();
+		eliminarIPCs();
 	}
+
 	return comensalesFinalizados;
 
 }
@@ -314,8 +316,6 @@ void MainProcess::eliminarIPCs(){
 }
 
 MainProcess::~MainProcess() {
-
-	eliminarIPCs();
 
 
 }

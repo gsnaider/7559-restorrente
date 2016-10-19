@@ -80,7 +80,7 @@ int GrupoComensalesProcess::obtenerNumeroMesa(){
 
 		if (mesaLibre){
 			mesa = i;
-			Logger::log(comensalLogId, "Mesa libre encontrara. Nro mesa: " + Logger::intToString(mesa), INFO);
+			Logger::log(comensalLogId, "Mesa libre encontrada. Nro mesa: " + Logger::intToString(mesa), INFO);
 
 			Logger::log(comensalLogId, "Ocupando mesa nro: " + Logger::intToString(mesa), INFO);
 
@@ -132,6 +132,9 @@ void GrupoComensalesProcess::llegar(){
 
 	sleep(TIEMPO_ANTENDIENDO);
 
+	Logger::log(comensalLogId, "Grupo de comensales esperando mesa libre ", INFO);
+
+
 	Logger::log(comensalLogId, "Esperando semaforo personas living ", DEBUG);
 
 	semPersonasLivingB->p();
@@ -145,8 +148,7 @@ void GrupoComensalesProcess::llegar(){
 	semPersonasLivingB->v();
 
 	semMesasLibres->p();
-	Logger::log(comensalLogId, "Grupo de comensales yendo a la mesa ", INFO);
-
+	Logger::log(comensalLogId, "Hay una mesa libre", INFO);
 
 	Logger::log(comensalLogId, "Esperando semaforo personas living ", DEBUG);
 
