@@ -6,6 +6,8 @@
 #include <sys/types.h>
 #include <string>
 
+const std::string semLogId = "Semaf";
+
 class Semaforo {
 
 private:

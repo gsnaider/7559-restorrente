@@ -14,9 +14,12 @@
 #include <sys/shm.h>
 #include <string>
 #include <errno.h>
+#include "../../logger/Logger.h"
 
 
 using namespace std;
+
+const string memCompLogId = "Shmemory";
 
 template <class T> class MemoriaCompartida {
 
@@ -47,22 +50,22 @@ template <class T> void MemoriaCompartida<T> :: crear ( const std::string& archi
 	// generacion de la clave
 	key_t clave = ftok ( archivo.c_str(),letra );
 	if ( clave == -1 ){
-		std::string mensaje = std::string("Error en ftok(): ") + std::string(strerror(errno));
-		cout << mensaje << endl;
+		string stringError = strerror(errno);
+		Logger::log(memCompLogId, "Error en ftok(): " + stringError , ERROR);
 	} else {
 		// creacion de la memoria compartida
 		this->shmId = shmget ( clave,sizeof(T),0644|IPC_CREAT );
 
 		if ( this->shmId == -1 ) {
-			std::string mensaje = std::string("Error en shmget(): ") + std::string(strerror(errno));
-			cout << mensaje << endl;
+			string stringError = strerror(errno);
+			Logger::log(memCompLogId, "Error en shmget(): " + stringError , ERROR);
 		} else {
 			// attach del bloque de memoria al espacio de direcciones del proceso
 			void* ptrTemporal = shmat ( this->shmId,NULL,0 );
 
 			if ( ptrTemporal == (void *) -1 ) {
-				std::string mensaje = std::string("Error en shmat(): ") + std::string(strerror(errno));
-				cout << mensaje << endl;
+				string stringError = strerror(errno);
+				Logger::log(memCompLogId, "Error en shmat(): " + stringError , ERROR);
 			} else {
 				this->ptrDatos = static_cast<T*> (ptrTemporal);
 			}

@@ -4,18 +4,21 @@
 #include <cstdio>
 #include <cstring>
 #include <iostream>
+#include "../../logger/Logger.h"
 
 using namespace std;
 
 Semaforo :: Semaforo ( const std::string& nombre,const int valorInicial, const int hashKey ):valorInicial(valorInicial) {
 	key_t clave = ftok ( nombre.c_str(),hashKey );
 	if (clave < 0){
-		cout << "Error ftok semaforo " << strerror(errno) << endl;
+		string stringError = strerror(errno);
+		Logger::log(semLogId, "Error frok semaforo " + stringError, ERROR);
 	}
 
 	this->id = semget ( clave,1,0666 | IPC_CREAT );
 	if (id < 0){
-		cout << "Error semget " << strerror(errno) << endl;
+		string stringError = strerror(errno);
+		Logger::log(semLogId, "Error semget " + stringError, ERROR);
 	}
 
 	this->inicializar ();
@@ -36,7 +39,8 @@ int Semaforo :: inicializar () const {
 	init.val = this->valorInicial;
 	int resultado = semctl ( this->id,0,SETVAL,init );
 	if (resultado < 0){
-		cout << "Error semctl (init) " << strerror(errno) << endl;
+		string stringError = strerror(errno);
+		Logger::log(semLogId, "Error semctl (init) " + stringError, ERROR);
 	}
 
 	return resultado;
@@ -52,7 +56,8 @@ int Semaforo :: p () const {
 
 	int resultado = semop ( this->id,&operacion,1 );
 	if (resultado < 0){
-		cout << "Error semop (p) " << strerror(errno) << endl;
+		string stringError = strerror(errno);
+		Logger::log(semLogId, "Error semop (p) " + stringError, ERROR);
 	}
 	return resultado;
 }
@@ -67,7 +72,8 @@ int Semaforo :: v () const {
 
 	int resultado = semop ( this->id,&operacion,1 );
 	if (resultado < 0){
-		cout << "Error semop (v) " << strerror(errno) << endl;
+		string stringError = strerror(errno);
+		Logger::log(semLogId, "Error semop (v) " + stringError, ERROR);
 	}
 	return resultado;
 }
@@ -75,6 +81,7 @@ int Semaforo :: v () const {
 void Semaforo :: eliminar () const {
 	int resultado = semctl ( this->id,0,IPC_RMID );
 	if (resultado < 0){
-		cout << "Error semctl (delete) " << strerror(errno) << endl;
+		string stringError = strerror(errno);
+		Logger::log(semLogId, "Error semctl (delete) " + stringError, ERROR);
 	}
 }

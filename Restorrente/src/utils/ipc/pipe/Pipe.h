@@ -3,8 +3,11 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+#include <string>
 
 using namespace std;
+
+const string pipeLogId = "Pipe";
 
 class Pipe {
 
