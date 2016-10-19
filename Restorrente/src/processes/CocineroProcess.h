@@ -15,13 +15,14 @@
 #include "../utils/ipc/semaphore/Semaforo.h"
 #include "../utils/ipc/pipe/Pipe.h"
 #include "../utils/ipc/shared-memory/MemoriaCompartida.h"
+#include "Process.h"
 
 namespace std {
 
 const string cocineroLogId = "Cocin";
 
 
-class CocineroProcess {
+class CocineroProcess : public Process {
 
 private:
 
@@ -50,6 +51,7 @@ public:
 			vector<MemoriaCompartida<double>>* shmFacturas,
 			Pipe* pipeLlamadosAMozos);
 	void run();
+	void limpiarRecursos();
 	virtual ~CocineroProcess();
 };
 

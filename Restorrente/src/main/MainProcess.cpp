@@ -11,13 +11,12 @@
 #include <unistd.h>
 #include <csignal>
 #include <cstdlib>
-#include <iostream>
 
+#include "../processes/AdminComensalesProcess.h"
 #include "../processes/CocineroProcess.h"
-#include "../processes/GrupoComensalesProcess.h"
 #include "../processes/MozoProcess.h"
 #include "../processes/RecepcionistaProcess.h"
-#include "../utils/random/RandomUtil.h"
+#include "../utils/ipc/signal/SignalHandler.h"
 
 
 namespace std {
@@ -174,42 +173,73 @@ void MainProcess::finalizarProcesosRestaurant(){
 
 }
 
-void MainProcess::inicializarComensalesComensales(){
-	for (int i = 0; i < cantComensales; i++){
+void MainProcess::inicializarProcesosComensales(){
+	pid_t idAdminComensales = fork();
 
-		Logger::log(mainLogId, "Iniciando comensal "+ Logger::intToString(i), DEBUG);
-		pid_t idComensal = fork();
-
-		if (idComensal == 0){
-			int cantPersonas = RandomUtil::randomInt(MAX_PERSONAS_POR_GRUPO) + 1;
-
-			GrupoComensalesProcess grupoComensalesProcess(cantPersonas, &semRecepcionistasLibres, &semComensalesEnPuerta,
-					&semPersonasLivingB, &shmPersonasLiving, &semMesasLibres,
-					&semsMesasLibres, &shmMesasLibres,
-					&pipeLlamadosAMozos, &semsLlegoComida, &semsMesaPago, menu);
-			grupoComensalesProcess.run();
-			exit(0);
-		} else {
-			idsComensales.push_back(idComensal);
-		}
-
+	if (idAdminComensales == 0){
+		AdminComensalesProcess adminComensales(cantComensales, menu, &semRecepcionistasLibres, &semComensalesEnPuerta,
+				&semPersonasLivingB, &shmPersonasLiving, &semMesasLibres,
+				&semsMesasLibres, &shmMesasLibres,
+				&pipeLlamadosAMozos, &semsLlegoComida, &semsMesaPago, &sigintHandler);
+		int comensalesCreados = adminComensales.iniciarComensales();
+		exit(comensalesCreados);
+	} else {
+		this->idAdminComensales = idAdminComensales;
 	}
+}
 
+void MainProcess::inicializarSigintHandler(){
+	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigintHandler);
+}
+
+void MainProcess::acumularPerdidas(){
+
+	for (int mesa = 0; mesa < cantMesas; mesa++){
+		semsFacturas.at(mesa).p();
+		perdidas += shmFacturas.at(mesa).leer();
+		semsFacturas.at(mesa).v();
+	}
+}
+
+void MainProcess::handleCorteLuz(int comensalesTerminados){
+	Logger::log(mainLogId, "CORTE DE LUZ", INFO);
+	acumularPerdidas();
+	eliminarIPCs();
+	iniciarSimulacion();
+	//Volver a inicializar estructuras datos.
+}
+
+
+void MainProcess::iniciarSimulacion(){
+	inicializarSigintHandler(); //Todos los procesos manejan el sigint (corte de luz).
+	inicializarProcesosRestaurant();
+	inicializarProcesosComensales();
+	crearMemoriasCompartidas();
 }
 
 void MainProcess::run(){
+	iniciarSimulacion();
+	Logger::log(mainLogId, "Simulacion iniciada", DEBUG);
+	int comensalesTerminados = 0;
 
-	inicializarProcesosRestaurant();
-	inicializarComensalesComensales();
+	bool corteLuz = false;
 
-	crearMemoriasCompartidas();
+	/*
+	while (comensalesTerminados < cantComensales){
 
-	// Estoy asumiendo que los unicos que pueden terminar "por su cuenta" son los comensales cuando se van.
-	for (int i = 0; i < cantComensales; i++){
-		pid_t idHijo = wait(NULL);
-		Logger::log(mainLogId, "Termino proceso hijo "+ Logger::intToString(idHijo), DEBUG);
+		pid_t id = wait(NULL); //solo los comensales finalizan de forma autonoma.
+		corteLuz = (sigintHandler.getGracefulQuit() == 1);
+		if (corteLuz){
+			handleCorteLuz(comensalesTerminados);
+
+		} else {
+			//wait finalizo porque termino un proceso hijo, y no por un corte de luz.
+			comensalesTerminados++;
+			Logger::log(mainLogId, "Termino el proceso "+ Logger::intToString(id), DEBUG);
+		}
 	}
-
+*/
+	waitpid(idAdminComensales, NULL, 0);
 	finalizarProcesosRestaurant();
 
 }

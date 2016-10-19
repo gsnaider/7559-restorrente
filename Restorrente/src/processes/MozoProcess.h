@@ -17,14 +17,13 @@
 #include "../utils/ipc/pipe/Pipe.h"
 #include "../utils/ipc/shared-memory/MemoriaCompartida.h"
 #include "../main/MainProcess.h"
-
-class Pipe;
+#include "Process.h"
 
 namespace std {
 
 const string mozoLogId = "Mozo";
 
-class MozoProcess {
+class MozoProcess : public Process{
 private:
 
 	Semaforo* semLlamadosAMozos;
@@ -58,6 +57,7 @@ public:
 	vector<Semaforo>* semsFacturas, vector<MemoriaCompartida<double>>* shmFacturas,
 	Semaforo* semCajaB, MemoriaCompartida<double>* shmCaja, vector<Semaforo>* semsMesaPago);
 	void run();
+	void limpiarRecursos();
 	virtual ~MozoProcess();
 };
 

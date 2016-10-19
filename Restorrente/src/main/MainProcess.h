@@ -17,13 +17,13 @@
 #include "../utils/ipc/semaphore/Semaforo.h"
 #include "../utils/ipc/shared-memory/MemoriaCompartida.h"
 #include "../utils/ipc/pipe/Pipe.h"
+#include "../utils/ipc/signal/SIGINT_Handler.h"
 #include "../utils/logger/Logger.h"
 
 
 
 namespace std {
 
-const int MAX_PERSONAS_POR_GRUPO = 5;
 const string mainLogId = "Main";
 
 
@@ -73,9 +73,12 @@ private:
 	int cantComensales;
 	Menu menu;
 
+	double perdidas;
+
 	vector<pid_t> idsRecepcionistas;
 	vector<pid_t> idsMozos;
 	vector<pid_t> idsComensales;
+	pid_t idAdminComensales;
 	pid_t idCocinero;
 
 
@@ -90,7 +93,6 @@ private:
 	vector<Semaforo> semsFacturas;
 	vector<Semaforo> semsMesasLibres;
 
-
 	MemoriaCompartida<int> shmPersonasLiving;
 	MemoriaCompartida<double> shmCaja;
 
@@ -100,18 +102,25 @@ private:
 	Pipe pipeLlamadosAMozos;
 	Pipe pipePedidosACocinar;
 
+	SIGINT_Handler sigintHandler;
+
 	void inicializarIPCs();
 	void inicializarSemaforos();
 	void inicializarMemoriasCompartidas();
 	void crearMemoriasCompartidas();
 	void inicializarPipesFifos();
+	void inicializarSigintHandler();
+
 
 	void inicializarProcesosRestaurant();
 	void iniciarProcesosMozo();
 	void iniciarProcesosRecepcionista();
 	void iniciarProcesoCocinero();
 
-	void inicializarComensalesComensales();
+
+	void iniciarSimulacion();
+
+	void inicializarProcesosComensales();
 
 	void finalizarProcesosRestaurant();
 
@@ -119,6 +128,10 @@ private:
 	void eliminarSemaforos();
 	void eliminarMemoriasCompartidas();
 	void eliminarPipesFifos();
+
+	void handleCorteLuz(int comensalesTerminados);
+	void acumularPerdidas();
+
 
 
 public:

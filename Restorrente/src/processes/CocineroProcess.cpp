@@ -163,6 +163,10 @@ void CocineroProcess::run(){
 	}
 }
 
+void CocineroProcess::limpiarRecursos(){
+	liberarMemoriasCompartidas();
+}
+
 void CocineroProcess::liberarMemoriasCompartidas(){
 
 	for (unsigned int i = 0; i < shmFacturas->size(); i++){

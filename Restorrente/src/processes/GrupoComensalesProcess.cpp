@@ -28,6 +28,7 @@ GrupoComensalesProcess::GrupoComensalesProcess(int cantPersonas, Semaforo* semRe
 	this->mesa = -1; //Despues se setea el valor real.
 
 	this->cantPersonas = cantPersonas;
+
 	this->semComensalesEnPuerta = semComensalesEnPuerta;
 	this->semRecepcionistasLibres = semRecepcionistasLibres;
 	this->semPersonasLivingB = semPersonasLivingB;
@@ -119,6 +120,7 @@ Pedido GrupoComensalesProcess::generarPedido() {
 
 
 void GrupoComensalesProcess::llegar(){
+
 	Logger::log(comensalLogId, "Llega grupo de comensales de "+ Logger::intToString(cantPersonas) + " personas", INFO);
 
 	semComensalesEnPuerta->v();
@@ -246,6 +248,11 @@ void GrupoComensalesProcess::run(){
 	pagar();
 	irse();
 }
+
+void GrupoComensalesProcess::limpiarRecursos(){
+	liberarMemoriasCompartidas();
+}
+
 
 void GrupoComensalesProcess::liberarMemoriasCompartidas(){
 	this->shmPersonasLiving->liberar();

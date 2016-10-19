@@ -217,6 +217,10 @@ void MozoProcess::run(){
 	}
 }
 
+void MozoProcess::limpiarRecursos(){
+	liberarMemoriasCompartidas();
+}
+
 
 void MozoProcess::liberarMemoriasCompartidas(){
 	this->shmCaja->liberar();

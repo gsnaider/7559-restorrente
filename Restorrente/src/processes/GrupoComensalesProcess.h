@@ -15,7 +15,7 @@
 #include "../model/Pedido.h"
 #include "RecepcionistaProcess.h"
 #include "../main/MainProcess.h"
-
+#include "Process.h"
 
 namespace std {
 
@@ -25,7 +25,7 @@ const string comensalLogId = "Comens";
 const double PROBABILIDAD_IRSE = 0.25;
 const int TIEMPO_COMER = 30;
 
-class GrupoComensalesProcess {
+class GrupoComensalesProcess : public Process {
 private:
 
 	int cantPersonas;
@@ -69,6 +69,7 @@ public:
 			Pipe* pipeLlamadosAMozos, vector<Semaforo>* semsLlegoComida, vector<Semaforo>* semsMesaPago, Menu menu);
 
 	void run();
+	void limpiarRecursos();
 	virtual ~GrupoComensalesProcess();
 };
 

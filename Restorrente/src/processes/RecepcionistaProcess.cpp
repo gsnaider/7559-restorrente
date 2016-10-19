@@ -36,6 +36,10 @@ void RecepcionistaProcess::run(){
 
 }
 
+void RecepcionistaProcess::limpiarRecursos(){
+	//No utiliza recursos que requieran limpieza.
+}
+
 RecepcionistaProcess::~RecepcionistaProcess() {
 	// TODO Auto-generated destructor stub
 }

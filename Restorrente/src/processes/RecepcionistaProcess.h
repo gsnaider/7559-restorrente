@@ -10,6 +10,7 @@
 
 #include "../utils/ipc/semaphore/Semaforo.h"
 #include "../utils/logger/Logger.h"
+#include "Process.h"
 
 namespace std {
 
@@ -17,7 +18,7 @@ const string recepcionistaLogId = "Recep";
 
 const int TIEMPO_ANTENDIENDO = 10;
 
-class RecepcionistaProcess {
+class RecepcionistaProcess : public Process {
 private:
 	Semaforo* semRecepcionistasLibres;
 	Semaforo* semComensalesEnPuerta;
@@ -25,6 +26,7 @@ private:
 public:
 	RecepcionistaProcess(Semaforo* semRecepcionistasLibres, Semaforo* semComensalesEnPuerta);
 	void run();
+	void limpiarRecursos();
 	virtual ~RecepcionistaProcess();
 };
 
