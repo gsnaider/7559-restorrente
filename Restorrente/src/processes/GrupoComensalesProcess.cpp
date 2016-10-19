@@ -80,7 +80,7 @@ int GrupoComensalesProcess::obtenerNumeroMesa(){
 
 		if (mesaLibre){
 			mesa = i;
-			Logger::log(comensalLogId, "Mesa libre encontrara. Nro mesa: " + Logger::intToString(mesa), INFO);
+			Logger::log(comensalLogId, "Mesa libre encontrada. Nro mesa: " + Logger::intToString(mesa), INFO);
 
 			Logger::log(comensalLogId, "Ocupando mesa nro: " + Logger::intToString(mesa), INFO);
 
