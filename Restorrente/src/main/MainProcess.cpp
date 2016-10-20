@@ -196,10 +196,11 @@ int MainProcess::finalizarComensales(){
 	Logger::log(mainLogId, "Finalizando procesos de comensales", DEBUG);
 	kill(idAdminComensales, SIGINT);
 	int cantComensalesFinalizados;
-	waitpid(idAdminComensales, &cantComensalesFinalizados, 0);
-
-	//TODO Ver como hacer para leer bien el valor de cantComensalesFinalizados del retorno del waitpid
-	cantComensalesFinalizados = cantComensales;
+	int response;
+	waitpid(idAdminComensales, &response, 0);
+	if (WIFEXITED(response)){
+		cantComensalesFinalizados = WEXITSTATUS(response);
+	}
 
 	Logger::log(mainLogId, "Cantidad de comensales finalizados: " + Logger::intToString(cantComensalesFinalizados), DEBUG);
 	return cantComensalesFinalizados;
@@ -214,6 +215,8 @@ void MainProcess::inicializarProcesosComensales(){
 				&semsMesasLibres, &shmMesasLibres,
 				&pipeLlamadosAMozos, &semsLlegoComida, &semsMesaPago);
 		int comensalesFinalizados = adminComensales.run();
+
+		Logger::log(adminComensalesLogId, "Exit con cantidad de comensales finalizados: " + Logger::intToString(comensalesFinalizados) , DEBUG);
 		exit(comensalesFinalizados);
 	} else {
 		this->idAdminComensales = idAdminComensales;
@@ -262,15 +265,20 @@ int MainProcess::run(){
 	Logger::log(mainLogId, "Simulacion iniciada", DEBUG);
 
 	int comensalesFinalizados = 0;
-	waitpid(idAdminComensales, &comensalesFinalizados, 0);
-
-	//TODO Ver como hacer para leer bien el valor de comensalesTerminados del retorno con el waitpid
-
+	int response;
+	waitpid(idAdminComensales, &response, 0);
 	bool corteLuz = (sigintHandler.getGracefulQuit() == 1);
 	if (corteLuz){
 		iniciarProcesoGerente();
 		//comensalesFinalizados = handleCorteLuz();
 	}else {
+
+		//Leyendo respuesta del AdminComensales
+		if (WIFEXITED(response)){
+			comensalesFinalizados = WEXITSTATUS(response);
+		}
+		Logger::log(mainLogId, "Cantidad de comensales finalizados: " + Logger::intToString(comensalesFinalizados), DEBUG);
+
 		finalizarProcesosRestaurant();
 		eliminarIPCs();
 	}
