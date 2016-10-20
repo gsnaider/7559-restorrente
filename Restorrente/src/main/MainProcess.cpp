@@ -24,7 +24,7 @@ namespace std {
 
 MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, int cantComensales, int perdidas, Menu menu):
 			semComensalesEnPuerta(SEM_COMENSALES_EN_PUERTA_INIT_FILE, 0, 0),
-			semRecepcionistasLibres(SEM_RECEPCIONISTAS_LIBRES_INIT_FILE, 0, 0), //cada recepcionista suma uno al semaforo cuando se inicia.
+			semRecepcionistasLibres(SEM_RECEPCIONISTAS_LIBRES_INIT_FILE, cantRecepcionistas, 0), //cada recepcionista suma uno al semaforo cuando se inicia.
 			semMesasLibres(SEM_MESAS_LIBRES_INIT_FILE, cantMesas, 0),
 			semPersonasLivingB(SEM_PERSONAS_LIVING_INIT_FILE, 1, 0),
 			semCajaB(SEM_CAJA_INIT_FILE, 1, 0),

@@ -26,13 +26,13 @@ void RecepcionistaProcess::run(){
 
 	//TODO Ver si hay mejor forma que while(true).
 	while (true){
-		semRecepcionistasLibres->v();
 		Logger::log(recepcionistaLogId, "Recepcionista esperando comensales. ", INFO);
 
 		semComensalesEnPuerta->p();
 		Logger::log(recepcionistaLogId, "Recepcionista atendiendo grupo de comensales. ", INFO);
 
 		sleep(TiemposEspera::TIEMPO_ATENDER);
+		semRecepcionistasLibres->v();
 	}
 
 
