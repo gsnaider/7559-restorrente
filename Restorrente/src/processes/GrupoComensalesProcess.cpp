@@ -130,9 +130,9 @@ void GrupoComensalesProcess::llegar(){
 	semRecepcionistasLibres->p();
 	Logger::log(comensalLogId, "Grupo de comensales siendo atendido por recepcionista ", INFO);
 
-	sleep(TIEMPO_ANTENDIENDO);
+	sleep(TiemposEspera::TIEMPO_ATENDER);
 
-	Logger::log(comensalLogId, "Grupo de comensales esperando mesa libre ", INFO);
+	Logger::log(comensalLogId, "Grupo de comensales esperando una mesa libre ", INFO);
 
 
 	Logger::log(comensalLogId, "Esperando semaforo personas living ", DEBUG);
@@ -192,11 +192,11 @@ void GrupoComensalesProcess::comer(){
 			Logger::log(comensalLogId, "Comiendo " + platos[i].getNombre(), INFO);
 
 		}
-		sleep(TIEMPO_COMER);
+		sleep(TiemposEspera::TIEMPO_COMER);
 
 		Logger::log(comensalLogId, "Grupo de comensales termino de comer.", INFO);
 
-		seguirPidiendo = ( RandomUtil::randomCeroUno() > PROBABILIDAD_IRSE);
+		seguirPidiendo = ( RandomUtil::randomCeroUno() > TiemposEspera::PROBABILIDAD_DEJAR_DE_COMER);
 
 	}while(seguirPidiendo);
 }

@@ -21,9 +21,6 @@ int main() {
 	Parser p = Parser();
 	p.parsearDocumento("../SetUp.xml");
 
-	//Direccion para usar en eclipse
-	//p.parsearDocumento("SetUp.xml");
-
 	int nivelDeLog = p.getNivelDeLog();
 	int cantMozos = p.gentCantMozos();
 	int cantRecepcionistas = p.getCantRecepcionistas();

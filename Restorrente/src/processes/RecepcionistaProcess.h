@@ -11,12 +11,11 @@
 #include "../utils/ipc/semaphore/Semaforo.h"
 #include "../utils/logger/Logger.h"
 #include "Process.h"
+#include "TiemposEspera.h"
 
 namespace std {
 
 const string recepcionistaLogId = "Recep";
-
-const int TIEMPO_ANTENDIENDO = 10;
 
 class RecepcionistaProcess : public Process {
 private:

@@ -19,32 +19,13 @@
 #include "../utils/ipc/pipe/Pipe.h"
 #include "../utils/ipc/signal/SIGINT_Handler.h"
 #include "../utils/logger/Logger.h"
+#include "../processes/TiemposEspera.h"
 
 
 
 namespace std {
 
 const string mainLogId = "Main";
-
-
-/*
-// PARA CORRER DESDE ECLIPSE
-const string SEM_COMENSALES_EN_PUERTA_INIT_FILE = "ipc-init-files/sem_comensales_en_puerta.txt";
-const string SEM_RECEPCIONISTAS_LIBRES_INIT_FILE = "ipc-init-files/sem_recepcionistas_libres.txt";
-const string SEM_MESAS_LIBRES_INIT_FILE = "ipc-init-files/sem_mesas_libres.txt";
-const string SEM_PERSONAS_LIVING_INIT_FILE = "ipc-init-files/sem_personas_living.txt";
-const string SEM_CAJA_INIT_FILE = "ipc-init-files/sem_caja.txt";
-const string SEM_LLAMADOS_MOZOS_INIT_FILE = "ipc-init-files/sem_llamados_mozos.txt";
-const string SEMS_LLEGO_COMIDA_INIT_FILE = "ipc-init-files/sems_llego_comida.txt";
-const string SEMS_MESA_PAGO_INIT_FILE = "ipc-init-files/sems_mesa_pago.txt";
-const string SEMS_FACTURA_INIT_FILE = "ipc-init-files/sems_factura.txt";
-const string SEMS_MESAS_LIBRES_INIT_FILE = "ipc-init-files/sems_mesas_libres.txt";
-
-const string SHM_PERSONAS_LIVING = "ipc-init-files/shm_personas_living.txt";
-const string SHM_CAJA = "ipc-init-files/shm_caja.txt";
-const string SHM_FACTURAS = "ipc-init-files/shm_facturas.txt";
-const string SHM_MESAS_LIBRES = "ipc-init-files/shm_mesas_libres.txt";
-*/
 
 
 const string SEM_COMENSALES_EN_PUERTA_INIT_FILE = "../ipc-init-files/sem_comensales_en_puerta.txt";

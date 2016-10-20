@@ -37,7 +37,6 @@ int RandomUtil::randomInt(int max){
 }
 
 void RandomUtil::seed() {
-	cout << "SEEDING." << endl;
 	srand (time(NULL));
 
 	seeded = true;

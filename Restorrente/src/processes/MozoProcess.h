@@ -18,6 +18,7 @@
 #include "../utils/ipc/shared-memory/MemoriaCompartida.h"
 #include "../main/MainProcess.h"
 #include "Process.h"
+#include "TiemposEspera.h"
 
 namespace std {
 
@@ -25,8 +26,6 @@ const string mozoLogId = "Mozo";
 
 class MozoProcess : public Process{
 private:
-
-	const int TIEMPO_TOMAR_PEDIDO = 2;
 
 	Semaforo* semLlamadosAMozos;
 	Pipe* pipeLlamadosAMozos;

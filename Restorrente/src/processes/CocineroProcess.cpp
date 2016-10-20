@@ -117,7 +117,7 @@ Comida CocineroProcess::cocinar(Pedido pedido) {
 	for (unsigned int i = 0; i < pedido.getPlatos().size(); i++){
 		Logger::log(cocineroLogId, "Cocinero cocinando " + pedido.getPlatos().at(i).getNombre(), INFO);
 
-		sleep(TIEMPO_COCINA);
+		sleep(TiemposEspera::TIEMPO_COCINA);
 
 		Logger::log(cocineroLogId, "Cocinero termino de cocinar " + pedido.getPlatos().at(i).getNombre(), INFO);
 		comida.agregarPlato(pedido.getPlatos().at(i));

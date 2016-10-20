@@ -16,6 +16,7 @@
 #include "../utils/ipc/pipe/Pipe.h"
 #include "../utils/ipc/shared-memory/MemoriaCompartida.h"
 #include "Process.h"
+#include "TiemposEspera.h"
 
 namespace std {
 
@@ -25,8 +26,6 @@ const string cocineroLogId = "Cocin";
 class CocineroProcess : public Process {
 
 private:
-
-	const int TIEMPO_COCINA = 2;
 
 	Pipe* pipePedidosACocinar;
 

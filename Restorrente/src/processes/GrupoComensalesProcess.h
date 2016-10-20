@@ -16,15 +16,12 @@
 #include "RecepcionistaProcess.h"
 #include "../main/MainProcess.h"
 #include "Process.h"
+#include "TiemposEspera.h"
 
 namespace std {
 
 const string comensalLogId = "Comens";
 
-
-const double PROBABILIDAD_IRSE = 0.25;
-const int TIEMPO_COMER = 10;
-const int TIEMPO_ELECCION_COMIDA = 5;
 
 
 class GrupoComensalesProcess : public Process {

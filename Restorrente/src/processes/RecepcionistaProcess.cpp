@@ -32,7 +32,7 @@ void RecepcionistaProcess::run(){
 		semComensalesEnPuerta->p();
 		Logger::log(recepcionistaLogId, "Recepcionista atendiendo grupo de comensales. ", INFO);
 
-		sleep(TIEMPO_ANTENDIENDO);
+		sleep(TiemposEspera::TIEMPO_ATENDER);
 	}
 
 

@@ -19,6 +19,7 @@
 #include "../utils/random/RandomUtil.h"
 #include "../utils/logger/Logger.h"
 #include "GrupoComensalesProcess.h"
+#include "TiemposEspera.h"
 
 namespace std {
 class Menu;

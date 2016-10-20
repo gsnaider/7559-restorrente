@@ -31,6 +31,8 @@ MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, i
 
 		{
 
+	this->perdidas = 0;
+
 	this->cantRecepcionistas = cantRecepcionistas;
 	this->cantMozos = cantMozos;
 	this->cantMesas = cantMesas;
@@ -218,7 +220,11 @@ void MainProcess::acumularPerdidas(){
 	Logger::log(mainLogId, "Acumulando perdidas por corte de luz", INFO);
 	for (int mesa = 0; mesa < cantMesas; mesa++){
 		semsFacturas.at(mesa).p();
-		perdidas += shmFacturas.at(mesa).leer();
+		Logger::log(mainLogId, "Leyendo factura de mesa: " + Logger::intToString(mesa), DEBUG);
+		double factura = shmFacturas.at(mesa).leer();
+		Logger::log(mainLogId, "Factura de mesa leida: $" + Logger::doubleToString(factura), DEBUG);
+		perdidas += factura;
+
 		semsFacturas.at(mesa).v();
 	}
 	Logger::log(mainLogId, "Perdidas acumuladas: $" + Logger::doubleToString(perdidas), INFO);
@@ -233,7 +239,7 @@ int MainProcess::handleCorteLuz(){
 	eliminarIPCs();
 
 	Logger::log(mainLogId, "ESPERANDO QUE VUELVA LA LUZ", INFO);
-	sleep(30); //Durmiendo hasta q vuevle la luz
+	sleep(TiemposEspera::TIEMPO_CORTE_LUZ);
 
 	return comensalesFinalizados;
 }
