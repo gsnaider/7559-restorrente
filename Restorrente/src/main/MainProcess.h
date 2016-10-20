@@ -61,6 +61,7 @@ private:
 	vector<pid_t> idsComensales;
 	pid_t idAdminComensales;
 	pid_t idCocinero;
+	pid_t idGerente;
 
 
 	Semaforo semComensalesEnPuerta;
@@ -97,6 +98,8 @@ private:
 	void iniciarProcesosMozo();
 	void iniciarProcesosRecepcionista();
 	void iniciarProcesoCocinero();
+
+	void iniciarProcesoGerente();
 
 
 	void iniciarSimulacion();

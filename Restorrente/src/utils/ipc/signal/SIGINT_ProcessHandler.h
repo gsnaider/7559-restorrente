@@ -36,6 +36,7 @@ class SIGINT_ProcessHandler : public EventHandler {
 		virtual int handleSignal ( int signum ) {
 			assert ( signum == SIGINT );
 			this->process->limpiarRecursos();
+			this->process->finalizar();
 			exit(0);
 			return 0;
 		}
