@@ -63,7 +63,7 @@ void MainProcess::iniciarProcesoGerente(){
 		gerente.run();
 		exit(0);
 	} else {
-		this->idCocinero = idCocinero;
+		this->idGerente = idGerente;
 	}
 }
 
@@ -269,8 +269,10 @@ int MainProcess::run(){
 	waitpid(idAdminComensales, &response, 0);
 	bool corteLuz = (sigintHandler.getGracefulQuit() == 1);
 	if (corteLuz){
+		//TODO
 		iniciarProcesoGerente();
-		//comensalesFinalizados = handleCorteLuz();
+		waitpid(idGerente, NULL, 0);
+		comensalesFinalizados = handleCorteLuz();
 	}else {
 
 		//Leyendo respuesta del AdminComensales

@@ -80,6 +80,7 @@ private:
 	vector<pid_t> idsComensales;
 	pid_t idAdminComensales;
 	pid_t idCocinero;
+	pid_t idGerente;
 
 
 	Semaforo semComensalesEnPuerta;

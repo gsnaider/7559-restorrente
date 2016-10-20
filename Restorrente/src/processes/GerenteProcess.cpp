@@ -29,6 +29,8 @@ GerenteProcess::GerenteProcess(Semaforo* semCajaB, MemoriaCompartida<double>* sh
 
 }
 void GerenteProcess::inicializarMemoriasCompartidas(){
+
+	Logger::log(gerenteLogId, "Inicializo las memorias comaprtidas", DEBUG);
 	this->shmCaja->crear(SHM_CAJA, 0);
 	this->shmPersonasLiving->crear(SHM_PERSONAS_LIVING,0);
 }
@@ -40,11 +42,14 @@ GerenteProcess::~GerenteProcess() {
 
 double GerenteProcess::consultarDineroEnCaja(){
 
+	Logger::log(gerenteLogId, "Accediendo a shmCaja por semaforo", DEBUG);
 	semCajaB->p();
 
 	double dineroEnCaja = shmCaja->leer();
+	Logger::log(gerenteLogId, "Ya pude leer de la caja", DEBUG);
 
 	semCajaB->v();
+	Logger::log(gerenteLogId, "Libero el semaforo de la caja", DEBUG);
 
 	return dineroEnCaja;
 
@@ -58,18 +63,22 @@ double GerenteProcess::consutlarDineroPerdido(){
 
 int GerenteProcess::consultarGenteEnLiving(){
 
+	Logger::log(gerenteLogId, "Accediendo a shared memory perosnasLiving", DEBUG);
 	semPersonasLivingB->p();
 
 	int genteEsperando = shmPersonasLiving->leer();
-
+	Logger::log(gerenteLogId, "Ya lei la gente esperando ", DEBUG);
 	semPersonasLivingB->v();
+	Logger::log(gerenteLogId, "Ya libero semaforo del Living", DEBUG);
 
 	return genteEsperando;
 }
 
 void GerenteProcess::liberarMemoriasCompartidas(){
 
+	Logger::log(gerenteLogId, "Liberando shmCaja", DEBUG);
 	this->shmCaja->liberar();
+	Logger::log(gerenteLogId, "Liberando shmPersonasLiving", DEBUG);
 	this->shmPersonasLiving->liberar();
 }
 
