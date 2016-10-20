@@ -227,6 +227,11 @@ void MainProcess::inicializarSigintHandler(){
 	SignalHandler::getInstance()->registrarHandler(SIGINT, &sigintHandler);
 }
 
+void MainProcess::inicializarSigusr1Handler(){
+	SignalHandler::getInstance()->registrarHandler(SIGUSR1, &sigusr1Handler);
+}
+
+
 void MainProcess::acumularPerdidas(){
 
 	Logger::log(mainLogId, "Acumulando perdidas por corte de luz", INFO);
@@ -258,6 +263,7 @@ void MainProcess::iniciarSimulacion(){
 	inicializarProcesosComensales();
 	crearMemoriasCompartidas();
 	inicializarSigintHandler();
+	inicializarSigusr1Handler();
 }
 
 int MainProcess::run(){
@@ -265,26 +271,34 @@ int MainProcess::run(){
 	Logger::log(mainLogId, "Simulacion iniciada", DEBUG);
 
 	int comensalesFinalizados = 0;
-	int response;
-	waitpid(idAdminComensales, &response, 0);
-	bool corteLuz = (sigintHandler.getGracefulQuit() == 1);
-	if (corteLuz){
-		//TODO
-		iniciarProcesoGerente();
-		waitpid(idGerente, NULL, 0);
-		comensalesFinalizados = handleCorteLuz();
-	}else {
-
-		//Leyendo respuesta del AdminComensales
-		if (WIFEXITED(response)){
-			comensalesFinalizados = WEXITSTATUS(response);
+	bool salir = false;
+	while(!salir){
+		int response;
+		waitpid(idAdminComensales, &response, 0);
+		bool corteLuz = (sigintHandler.getGracefulQuit() == 1);
+		bool llegoGerente = (sigusr1Handler.getGracefulQuit() == 1);
+		if (corteLuz){
+			comensalesFinalizados = handleCorteLuz();
 		}
-		Logger::log(mainLogId, "Cantidad de comensales finalizados: " + Logger::intToString(comensalesFinalizados), DEBUG);
+		else if(llegoGerente){
+			sigusr1Handler.setGracefulQuit(0);
+			iniciarProcesoGerente();
+			waitpid(idGerente, NULL, 0);
+		}
+		else {
 
-		finalizarProcesosRestaurant();
-		eliminarIPCs();
+			//Leyendo respuesta del AdminComensales
+			if (WIFEXITED(response)){
+				comensalesFinalizados = WEXITSTATUS(response);
+			}
+			Logger::log(mainLogId, "Cantidad de comensales finalizados: " + Logger::intToString(comensalesFinalizados), DEBUG);
+
+			finalizarProcesosRestaurant();
+			eliminarIPCs();
+
+		}
+		salir = !llegoGerente;
 	}
-
 	return comensalesFinalizados;
 
 }
