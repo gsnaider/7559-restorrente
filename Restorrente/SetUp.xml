@@ -3,7 +3,7 @@
 	<cantMozos>2</cantMozos>
 	<cantRecepcionistas>1</cantRecepcionistas>
 	<cantMesas>1</cantMesas>
-	<nivelDeLog>1</nivelDeLog>
+	<nivelDeLog>0</nivelDeLog>
 	<Menu>
 		<Plato>
 			<precio>140.23</precio>

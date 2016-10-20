@@ -124,6 +124,8 @@ int AdminComensalesProcess::run(){
 		}
 	}
 
+	Logger::log(adminComensalesLogId, "Devolviendo cantidad de comensales inicializados: " + Logger::intToString(comensalesCreados) , DEBUG);
+
 	return comensalesCreados;
 
 }
