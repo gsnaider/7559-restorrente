@@ -26,7 +26,7 @@ class CocineroProcess : public Process {
 
 private:
 
-	const int TIEMPO_COCINA = 15;
+	const int TIEMPO_COCINA = 2;
 
 	Pipe* pipePedidosACocinar;
 

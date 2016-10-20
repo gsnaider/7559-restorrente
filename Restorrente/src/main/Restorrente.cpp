@@ -52,5 +52,8 @@ int main() {
 		cantComensalesFinalizadosAcum += cantComensalesFinalizados;
 	} while(cantComensalesFinalizadosAcum < cantComensales);
 
+	Logger::log(mainLogId, "Simulacion finalizada", INFO);
+
+
 	return 0;
 }

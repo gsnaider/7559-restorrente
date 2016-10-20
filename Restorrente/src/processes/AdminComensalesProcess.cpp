@@ -62,7 +62,7 @@ int AdminComensalesProcess::run(){
 	bool corteLuz = false;
 	while (i < cantComensales && !corteLuz){
 
-		sleep(10);
+		sleep(RandomUtil::randomInt(10));
 
 		pid_t idComensal = fork();
 
@@ -73,6 +73,7 @@ int AdminComensalesProcess::run(){
 					shmPersonasLiving, semMesasLibres, semsMesasLibres,
 					shmMesasLibres, pipeLlamadosAMozos, semsLlegoComida,
 					semsMesaPago, menu);
+
 			grupoComensalesProcess.run();
 			exit(0);
 		} else {

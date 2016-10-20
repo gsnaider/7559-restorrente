@@ -218,6 +218,7 @@ void MainProcess::acumularPerdidas(){
 		perdidas += shmFacturas.at(mesa).leer();
 		semsFacturas.at(mesa).v();
 	}
+	Logger::log(mainLogId, "Perdidas acumuladas: $" + Logger::doubleToString(perdidas), INFO);
 }
 
 
@@ -256,7 +257,9 @@ int MainProcess::run(){
 		comensalesFinalizados = handleCorteLuz();
 	}else {
 		finalizarProcesosRestaurant();
+		eliminarIPCs();
 	}
+
 	return comensalesFinalizados;
 
 }
@@ -314,8 +317,6 @@ void MainProcess::eliminarIPCs(){
 }
 
 MainProcess::~MainProcess() {
-
-	eliminarIPCs();
 
 
 }
