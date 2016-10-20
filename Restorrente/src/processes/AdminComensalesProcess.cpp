@@ -58,11 +58,8 @@ int AdminComensalesProcess::run(){
 
 	int comensalesCreados = 0;
 
-	int i = 0;
 	bool corteLuz = false;
-	while (i < cantComensales && !corteLuz){
-
-		sleep(RandomUtil::randomInt(10));
+	while (comensalesCreados < cantComensales && !corteLuz){
 
 		pid_t idComensal = fork();
 
@@ -81,12 +78,13 @@ int AdminComensalesProcess::run(){
 			comensalesCreados++;
 		}
 
+		sleep(60);
 		corteLuz = (sigintHandler.getGracefulQuit() == 1);
 		if (corteLuz){
 			Logger::log(adminComensalesLogId, "Corte de luz: abortando creacion de comensales. Comensales creados hasta el momento: " + Logger::intToString(comensalesCreados) , DEBUG);
 			Logger::log(adminComensalesLogId, "Corte de luz: Se van los comensales que estaban en el restaurant" , INFO);
 		}
-		i++;
+
 	}
 
 	if(corteLuz){
