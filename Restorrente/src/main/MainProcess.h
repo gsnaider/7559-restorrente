@@ -117,6 +117,8 @@ private:
 	void iniciarProcesosRecepcionista();
 	void iniciarProcesoCocinero();
 
+	void iniciarProcesoGerente();
+
 
 	void iniciarSimulacion();
 

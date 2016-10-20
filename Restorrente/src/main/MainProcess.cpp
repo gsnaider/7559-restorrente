@@ -16,6 +16,7 @@
 #include "../processes/CocineroProcess.h"
 #include "../processes/MozoProcess.h"
 #include "../processes/RecepcionistaProcess.h"
+#include "../processes/GerenteProcess.h"
 #include "../utils/ipc/signal/SignalHandler.h"
 
 
@@ -53,6 +54,19 @@ void MainProcess::iniciarProcesoCocinero(){
 		this->idCocinero = idCocinero;
 	}
 }
+void MainProcess::iniciarProcesoGerente(){
+	Logger::log(mainLogId, "Iniciando gerente", DEBUG);
+	pid_t idGerente = fork();
+	if (idGerente == 0){
+		GerenteProcess gerente(&semCajaB, &shmCaja,
+				&semPersonasLivingB, &shmPersonasLiving, perdidas);
+		gerente.run();
+		exit(0);
+	} else {
+		this->idCocinero = idCocinero;
+	}
+}
+
 
 void MainProcess::iniciarProcesosMozo(){
 	for (int i = 0; i < cantMozos; i++){
@@ -254,7 +268,8 @@ int MainProcess::run(){
 
 	bool corteLuz = (sigintHandler.getGracefulQuit() == 1);
 	if (corteLuz){
-		comensalesFinalizados = handleCorteLuz();
+		iniciarProcesoGerente();
+		//comensalesFinalizados = handleCorteLuz();
 	}else {
 		finalizarProcesosRestaurant();
 		eliminarIPCs();
