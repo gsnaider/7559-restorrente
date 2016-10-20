@@ -167,10 +167,9 @@ void GrupoComensalesProcess::llegar(){
 
 
 void GrupoComensalesProcess::comer(){
-	bool seguirPidiendo = true;
-	int i = 0;
+	bool seguirPidiendo;
 
-	while(seguirPidiendo){
+	do{
 		Logger::log(comensalLogId, "Grupo de comensales eligiendo comida", INFO);
 
 		Pedido pedido = generarPedido();
@@ -197,14 +196,9 @@ void GrupoComensalesProcess::comer(){
 
 		Logger::log(comensalLogId, "Grupo de comensales termino de comer.", INFO);
 
-		// TODO Arreglar, no esta funcionando el random.
-		//seguirPidiendo = (RandomUtil::randomCeroUno() < PROBABILIDAD_IRSE);
+		seguirPidiendo = ( RandomUtil::randomCeroUno() > PROBABILIDAD_IRSE);
 
-		//TODO Solucion temporal (borrar).
-		i++;
-		seguirPidiendo = (i < 2);
-
-	}
+	}while(seguirPidiendo);
 }
 
 void GrupoComensalesProcess::pagar(){

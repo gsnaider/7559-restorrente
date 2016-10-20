@@ -62,7 +62,7 @@ int AdminComensalesProcess::run(){
 	bool corteLuz = false;
 	while (i < cantComensales && !corteLuz){
 
-		sleep(3);
+		sleep(RandomUtil::randomInt(10));
 
 		pid_t idComensal = fork();
 

@@ -218,6 +218,7 @@ void MainProcess::acumularPerdidas(){
 		perdidas += shmFacturas.at(mesa).leer();
 		semsFacturas.at(mesa).v();
 	}
+	Logger::log(mainLogId, "Perdidas acumuladas: $" + Logger::doubleToString(perdidas), INFO);
 }
 
 
