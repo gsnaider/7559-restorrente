@@ -74,6 +74,7 @@ int AdminComensalesProcess::run(){
 			grupoComensalesProcess.run();
 			exit(0);
 		} else {
+			Logger::log(adminComensalesLogId, "Se inicializo un nuevo comensal con id: " + Logger::intToString(idComensal), INFO);
 			idsComensales.push_back(idComensal);
 			comensalesCreados++;
 		}

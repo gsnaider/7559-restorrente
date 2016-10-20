@@ -37,6 +37,9 @@ class SIGUSR1_Handler : public EventHandler {
 			return this->gracefulQuit;
 		}
 
+		void setGracefulQuit(sig_atomic_t gracefulQuit){
+			this->gracefulQuit = gracefulQuit;
+		}
 };
 
 

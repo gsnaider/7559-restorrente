@@ -12,13 +12,14 @@
 #include <string>
 #include <vector>
 
+//#include "../model/Comida.h"
 #include "../model/Menu.h"
-#include "../model/Comida.h"
+#include "../utils/ipc/pipe/Pipe.h"
 #include "../utils/ipc/semaphore/Semaforo.h"
 #include "../utils/ipc/shared-memory/MemoriaCompartida.h"
-#include "../utils/ipc/pipe/Pipe.h"
 #include "../utils/ipc/signal/SIGINT_Handler.h"
-#include "../utils/logger/Logger.h"
+#include "../utils/ipc/signal/SIGUSR1_Handler.h"
+//#include "../utils/logger/Logger.h"
 #include "../processes/TiemposEspera.h"
 
 
@@ -91,6 +92,7 @@ private:
 	Pipe pipePedidosACocinar;
 
 	SIGINT_Handler sigintHandler;
+	SIGUSR1_Handler sigusr1Handler;
 
 	void inicializarIPCs();
 	void inicializarSemaforos();
@@ -98,6 +100,7 @@ private:
 	void crearMemoriasCompartidas();
 	void inicializarPipesFifos();
 	void inicializarSigintHandler();
+	void inicializarSigusr1Handler();
 
 
 	void inicializarProcesosRestaurant();
