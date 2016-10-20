@@ -44,6 +44,12 @@ const string SHM_CAJA = "../ipc-init-files/shm_caja.txt";
 const string SHM_FACTURAS = "../ipc-init-files/shm_facturas.txt";
 const string SHM_MESAS_LIBRES = "../ipc-init-files/shm_mesas_libres.txt";
 
+
+struct mainProcessReturnData {
+	int cantComensalesFinalizados;
+	double perdidas;
+};
+
 class MainProcess {
 
 private:
@@ -120,12 +126,12 @@ private:
 
 
 public:
-	MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, int cantComensales, Menu menu);
+	MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, int cantComensales, int perdidas, Menu menu);
 
 	/**
 	 * Devuelve la cantidad de comensales que pasaron por el restaurant.
 	 */
-	int run();
+	mainProcessReturnData run();
 
 	virtual ~MainProcess();
 };

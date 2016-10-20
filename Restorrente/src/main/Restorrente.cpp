@@ -42,11 +42,12 @@ int main() {
 	Logger::log(mainLogId, "nivelDeLog: " + Logger::intToString(nivelDeLog), INFO);
 
 	int comensalesPendientes = cantComensales;
-
+	double perdidas = 0;
 	do {
-		MainProcess mainProcess(cantRecepcionistas, cantMozos, cantMesas, comensalesPendientes, menu);
-		int cantComensalesFinalizados = mainProcess.run();
-		comensalesPendientes -= cantComensalesFinalizados;
+		MainProcess mainProcess(cantRecepcionistas, cantMozos, cantMesas, comensalesPendientes, perdidas, menu);
+		mainProcessReturnData mainProcessReturnData = mainProcess.run();
+		comensalesPendientes -= mainProcessReturnData.cantComensalesFinalizados;
+		perdidas += mainProcessReturnData.perdidas;
 	} while(comensalesPendientes > 0);
 
 	Logger::log(mainLogId, "Simulacion finalizada", INFO);

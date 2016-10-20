@@ -51,8 +51,8 @@ void AdminComensalesProcess::inicializarHandler(){
 
 int AdminComensalesProcess::run(){
 
-	Logger::log(adminComensalesLogId, "Comenzando inicializacion de comensales", DEBUG);
-	Logger::log(adminComensalesLogId, "Cantidad de comensales a inicializar: " + Logger::intToString(cantComensales) , DEBUG);
+	Logger::log(adminComensalesLogId, "Comenzando inicializacion de comensales", INFO);
+	Logger::log(adminComensalesLogId, "Cantidad de comensales a inicializar: " + Logger::intToString(cantComensales) , INFO);
 
 	vector<pid_t> idsComensales;
 

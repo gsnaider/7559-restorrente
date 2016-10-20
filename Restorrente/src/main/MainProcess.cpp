@@ -22,7 +22,7 @@
 
 namespace std {
 
-MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, int cantComensales, Menu menu):
+MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, int cantComensales, int perdidas, Menu menu):
 			semComensalesEnPuerta(SEM_COMENSALES_EN_PUERTA_INIT_FILE, 0, 0),
 			semRecepcionistasLibres(SEM_RECEPCIONISTAS_LIBRES_INIT_FILE, 0, 0), //cada recepcionista suma uno al semaforo cuando se inicia.
 			semMesasLibres(SEM_MESAS_LIBRES_INIT_FILE, cantMesas, 0),
@@ -32,7 +32,7 @@ MainProcess::MainProcess(int cantRecepcionistas, int cantMozos, int cantMesas, i
 
 		{
 
-	this->perdidas = 0;
+	this->perdidas = perdidas;
 
 	this->cantRecepcionistas = cantRecepcionistas;
 	this->cantMozos = cantMozos;
@@ -266,7 +266,7 @@ void MainProcess::iniciarSimulacion(){
 	inicializarSigintHandler();
 }
 
-int MainProcess::run(){
+mainProcessReturnData MainProcess::run(){
 	iniciarSimulacion();
 	Logger::log(mainLogId, "Simulacion iniciada", DEBUG);
 
@@ -291,7 +291,11 @@ int MainProcess::run(){
 		eliminarIPCs();
 	}
 
-	return comensalesFinalizados;
+	mainProcessReturnData returnData;
+	returnData.cantComensalesFinalizados = comensalesFinalizados;
+	returnData.perdidas = perdidas;
+
+	return returnData;
 
 }
 
