@@ -258,8 +258,9 @@ int MainProcess::handleCorteLuz(){
 	eliminarIPCs();
 
 	Logger::log(mainLogId, "ESPERANDO QUE VUELVA LA LUZ", INFO);
-	sleep(TiemposEspera::TIEMPO_CORTE_LUZ);
-
+	if(TiemposEspera::tiempos){
+		sleep(TiemposEspera::TIEMPO_CORTE_LUZ);
+	}
 	return comensalesFinalizados;
 }
 

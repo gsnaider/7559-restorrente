@@ -85,7 +85,10 @@ void MozoProcess::procesarPedido(Pedido pedido) {
 
 	for (unsigned int i = 0; i < pedido.getPlatos().size(); i++){
 		Logger::log(mozoLogId, "Mozo tomando pedido de " + pedido.getPlatos().at(i).getNombre(), INFO);
-		sleep(TiemposEspera::TIEMPO_TOMAR_PEDIDO);
+		if (TiemposEspera::tiempos){
+			sleep(TiemposEspera::TIEMPO_TOMAR_PEDIDO);
+		}
+
 	}
 
 	string pedidoStr = LlamadoAMozoSerializer::serializar(pedido);

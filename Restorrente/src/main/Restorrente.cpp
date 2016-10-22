@@ -35,6 +35,12 @@ int main() {
 
 	Logger::setMode(mode);
 
+
+	if (cantMesas <= 0 || cantMozos <= 0 || cantRecepcionistas <= 0 || cantComensales <= 0){
+		Logger::log(mainLogId, "Datos invalidos en configuracion.", INFO);
+		exit(0);
+	}
+
 	Logger::log(mainLogId, "Cantidad de Mozos: " + Logger::intToString(cantMozos), INFO);
 	Logger::log(mainLogId, "Cantidad de Recepcionistas: " + Logger::intToString(cantRecepcionistas), INFO);
 	Logger::log(mainLogId, "Cantidad de Mesas: " + Logger::intToString(cantMesas), INFO);

@@ -79,7 +79,9 @@ int AdminComensalesProcess::run(){
 			comensalesCreados++;
 		}
 
-		sleep(RandomUtil::randomInt(TiemposEspera::TIEMPO_RANDOM_ENTRE_COMENSALES));
+		if (TiemposEspera::tiempos){
+			sleep(RandomUtil::randomInt(TiemposEspera::TIEMPO_RANDOM_ENTRE_COMENSALES));
+		}
 		corteLuz = (sigintHandler.getGracefulQuit() == 1);
 		if (corteLuz){
 			Logger::log(adminComensalesLogId, "Corte de luz: abortando creacion de comensales. Comensales creados hasta el momento: " + Logger::intToString(comensalesCreados) , DEBUG);

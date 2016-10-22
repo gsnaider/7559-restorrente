@@ -129,9 +129,9 @@ void GrupoComensalesProcess::llegar(){
 
 	semRecepcionistasLibres->p();
 	Logger::log(comensalLogId, "Grupo de comensales siendo atendido por recepcionista ", INFO);
-
-	sleep(TiemposEspera::TIEMPO_ATENDER);
-
+	if (TiemposEspera::tiempos){
+		sleep(TiemposEspera::TIEMPO_ATENDER);
+	}
 	Logger::log(comensalLogId, "Grupo de comensales esperando una mesa libre ", INFO);
 
 
@@ -192,7 +192,9 @@ void GrupoComensalesProcess::comer(){
 			Logger::log(comensalLogId, "Comiendo " + platos[i].getNombre(), INFO);
 
 		}
-		sleep(TiemposEspera::TIEMPO_COMER);
+		if (TiemposEspera::tiempos){
+			sleep(TiemposEspera::TIEMPO_COMER);
+		}
 
 		Logger::log(comensalLogId, "Grupo de comensales termino de comer.", INFO);
 

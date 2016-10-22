@@ -103,20 +103,28 @@ void GerenteProcess::run(){
 		if(opcion == "1"){
 			cout << "Selecciono 1" << endl;
 			double dineroEnCaja = consultarDineroEnCaja();
-			cout << "El dinero actual en la caja es " << dineroEnCaja << endl;
+			cout << endl;
+			cout << "El dinero actual en la caja es $" << dineroEnCaja << endl;
+			cout << endl;
 		}
 		else if(opcion == "2"){
 			cout << "Selecciono 2" << endl;
 			double dineroPerdido = consutlarDineroPerdido();
+			cout << endl;
 			cout << "Se perdio hasta el momento " << dineroPerdido << " por cortes de luz" << endl;
+			cout << endl;
 		}
 		else if(opcion == "3"){
 			cout << "Selecciono 3" << endl;
 			int genteEnLiving = consultarGenteEnLiving();
+			cout << endl;
 			cout << "Actualmente hay " << genteEnLiving << " grupos de comensales esperando en el Living" << endl;
+			cout << endl;
 		}
 		else if(opcion == "4"){
+			cout << endl;
 			cout << "Selecciono 4. Fin del Gerente" << endl;
+			cout << endl;
 			condicion = false;
 		}
 		else
